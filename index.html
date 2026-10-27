@@ -39,7 +39,7 @@
         .store-title { text-align: center; color: #00ff88; margin-bottom: 15px; font-size: 20px; }
         .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
         .product-card { background-color: rgba(0,0,0,0.35); border-radius: 12px; padding: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.2); display: flex; flex-direction: column; justify-content: space-between; }
-        .product-card img { width: 100%; height: 130px; object-fit: contain; border-radius: 8px; margin-bottom: 10px; background-color: #ffffff; padding: 5px; box-sizing: border-box; }
+        .product-img-box { width: 100%; height: 110px; background: linear-gradient(135deg, #2c004e, #590099); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 45px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); }
         .product-card h3 { font-size: 16px; margin: 8px 0; color: #ffd700; }
         .product-card p { font-size: 13px; margin: 5px 0; color: #ddd; }
         .product-price { font-weight: bold; color: #00ff88; font-size: 15px; margin: 8px 0; }
@@ -73,7 +73,7 @@
             <div id="messageBox"></div>
         </div>
 
-        <!-- واجهة المشترك (بيانات الاشتراك + متجر الأجهزة والخدمات بالصور الحقيقية) -->
+        <!-- واجهة المشترك (بيانات الاشتراك + متجر الأجهزة والخدمات) -->
         <div id="userPanel" class="result-box">
             <h3 style="text-align: center; color: #d1a3ff;">بيانات الاشتراك</h3>
             <div class="result-item">🟢 حالة الاشتراك: <span id="resStatus" style="font-weight: bold;"></span></div>
@@ -82,14 +82,14 @@
             <div class="result-item">📅 تاريخ الانتهاء: <span id="resExp"></span></div>
             <div class="result-item">💰 الديون: <span id="resDebt"></span> دينار</div>
             
-            <!-- قسم متجر الأجهزة والخدمات بالصور الحقيقية -->
+            <!-- قسم متجر الأجهزة والخدمات -->
             <div class="store-section">
                 <div class="store-title">🛒 متجر الأجهزة والخدمات المتاحة</div>
                 <div class="products-grid">
                     
                     <!-- 1. صحن باور بيم -->
                     <div class="product-card">
-                        <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=300" alt="PowerBeam">
+                        <div class="product-img-box">📡</div>
                         <h3>صحن باور بيم (PowerBeam)</h3>
                         <p>جهاز بث واستقبال لاسلكي عالي المسافات</p>
                         <div class="product-price">تواصل لمعرفة السعر</div>
@@ -98,7 +98,7 @@
 
                     <!-- 2. صحن لايت بيم -->
                     <div class="product-card">
-                        <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=300" alt="LiteBeam">
+                        <div class="product-img-box">📶</div>
                         <h3>صحن لايت بيم (LiteBeam)</h3>
                         <p>مثالي للربط السريع ونقل الإشارة للمنازل</p>
                         <div class="product-price">تواصل لمعرفة السعر</div>
@@ -107,7 +107,7 @@
 
                     <!-- 3. راوترات الشركات -->
                     <div class="product-card">
-                        <img src="https://images.unsplash.com/photo-1606229365516-1c7c92849c5e?w=300" alt="Routers">
+                        <div class="product-img-box">🌐</div>
                         <h3>راوترات (TP-Link, Tenda, Deco)</h3>
                         <p>راوترات منزلية وأنظمة مش (Mesh) لتغطية كاملة</p>
                         <div class="product-price">متوفرة عدة موديلات</div>
@@ -116,7 +116,7 @@
 
                     <!-- 4. كيبل شبكة أصلي BlueStorm -->
                     <div class="product-card">
-                        <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=300" alt="BlueStorm Cable">
+                        <div class="product-img-box">🔌</div>
                         <h3>كيبل شبكة أصلي (BlueStorm)</h3>
                         <p>كيبل خارجي أصلي للصحون والراوترات مقاوم للشمس</p>
                         <div class="product-price">حسب اللفة أو الأمتار</div>
@@ -125,7 +125,7 @@
 
                     <!-- 5. يوبي إس Mini UPS -->
                     <div class="product-card">
-                        <img src="https://images.unsplash.com/photo-1616469829941-c7200edec809?w=300" alt="Mini UPS">
+                        <div class="product-img-box">🔋</div>
                         <h3>يوبي إس (Mini UPS) للراوتر والصحن</h3>
                         <p>يبقي الإنترنت شغالاً عند انقطاع الكهرباء</p>
                         <div class="product-price">متوفر بقوات مختلفة</div>
@@ -134,7 +134,7 @@
 
                     <!-- 6. كاميرات مراقبة -->
                     <div class="product-card">
-                        <img src="https://images.unsplash.com/photo-1557597774-9d273605dfa9?w=300" alt="Cameras">
+                        <div class="product-img-box">📷</div>
                         <h3>كاميرات مراقبة + UPS خاص</h3>
                         <p>أنظمة حماية أمنية متكاملة مع منظومة طاقة</p>
                         <div class="product-price">عروض خاصة للمنازل</div>
@@ -385,4 +385,27 @@
             try {
                 const res = await fetch(`${API_URL}/delete_user`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ admin_user: adminUser,
+                    body: JSON.stringify({ admin_user: adminUser, admin_pass: adminPass, username: userToDelete })
+                });
+                if(res.ok) loadAllUsers();
+            } catch (err) {
+                alert("حدث خطأ أثناء الحذف");
+            }
+        }
+
+        function sendWhatsApp(phone, debt) {
+            let formattedPhone = phone;
+            if(formattedPhone.startsWith('0')) {
+                formattedPhone = "964" + formattedPhone.substring(1);
+            }
+            const msg = `تحية طيبة\nنود اعلامكم بأن اشتراككم بخدمة الانترنت بشار الالوسي شارف على الانتهاء للاستمرار بالتمتع بخدماتنا يرجى تجديد الاشتراك من خلال التواصل معنا مباشرة\nزيارة مكتبنا\nاو عبر الماستر كارد او الزين كاش\nرقم الماستر 7116570545\nزين كاش 07814122720\nشكرا لتفهمكم\n\nطلبك الحالي: ${debt} دينار`;
+            const encodedMsg = encodeURIComponent(msg);
+            window.open(`https://wa.me/${formattedPhone}?text=${encodedMsg}`, '_blank');
+        }
+
+        function logout() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>
