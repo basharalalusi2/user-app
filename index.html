@@ -82,14 +82,14 @@
             <div class="result-item">📅 تاريخ الانتهاء: <span id="resExp"></span></div>
             <div class="result-item">💰 الديون: <span id="resDebt"></span> دينار</div>
             
-            <!-- قسم متجر الأجهزة والخدمات بالصور الدقيقة -->
+            <!-- قسم متجر الأجهزة والخدمات بالصور الحقيقية -->
             <div class="store-section">
                 <div class="store-title">🛒 متجر الأجهزة والخدمات المتاحة</div>
                 <div class="products-grid">
                     
                     <!-- 1. صحن باور بيم -->
                     <div class="product-card">
-                        <img src="https://i.ibb.co/3ykf13r/powerbeam.png" alt="PowerBeam">
+                        <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=300" alt="PowerBeam">
                         <h3>صحن باور بيم (PowerBeam)</h3>
                         <p>جهاز بث واستقبال لاسلكي عالي المسافات</p>
                         <div class="product-price">تواصل لمعرفة السعر</div>
@@ -98,7 +98,7 @@
 
                     <!-- 2. صحن لايت بيم -->
                     <div class="product-card">
-                        <img src="https://i.ibb.co/6y4t153/litebeam.png" alt="LiteBeam">
+                        <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=300" alt="LiteBeam">
                         <h3>صحن لايت بيم (LiteBeam)</h3>
                         <p>مثالي للربط السريع ونقل الإشارة للمنازل</p>
                         <div class="product-price">تواصل لمعرفة السعر</div>
@@ -107,7 +107,7 @@
 
                     <!-- 3. راوترات الشركات -->
                     <div class="product-card">
-                        <img src="https://i.ibb.co/0y7x20d/routers.png" alt="Routers">
+                        <img src="https://images.unsplash.com/photo-1606229365516-1c7c92849c5e?w=300" alt="Routers">
                         <h3>راوترات (TP-Link, Tenda, Deco)</h3>
                         <p>راوترات منزلية وأنظمة مش (Mesh) لتغطية كاملة</p>
                         <div class="product-price">متوفرة عدة موديلات</div>
@@ -116,7 +116,7 @@
 
                     <!-- 4. كيبل شبكة أصلي BlueStorm -->
                     <div class="product-card">
-                        <img src="https://i.ibb.co/4g9f23s/bluestorm.png" alt="BlueStorm Cable">
+                        <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=300" alt="BlueStorm Cable">
                         <h3>كيبل شبكة أصلي (BlueStorm)</h3>
                         <p>كيبل خارجي أصلي للصحون والراوترات مقاوم للشمس</p>
                         <div class="product-price">حسب اللفة أو الأمتار</div>
@@ -125,7 +125,7 @@
 
                     <!-- 5. يوبي إس Mini UPS -->
                     <div class="product-card">
-                        <img src="https://i.ibb.co/2k9x15f/ups.png" alt="Mini UPS">
+                        <img src="https://images.unsplash.com/photo-1616469829941-c7200edec809?w=300" alt="Mini UPS">
                         <h3>يوبي إس (Mini UPS) للراوتر والصحن</h3>
                         <p>يبقي الإنترنت شغالاً عند انقطاع الكهرباء</p>
                         <div class="product-price">متوفر بقوات مختلفة</div>
@@ -134,7 +134,7 @@
 
                     <!-- 6. كاميرات مراقبة -->
                     <div class="product-card">
-                        <img src="https://i.ibb.co/8K2f12x/cameras.png" alt="Cameras">
+                        <img src="https://images.unsplash.com/photo-1557597774-9d273605dfa9?w=300" alt="Cameras">
                         <h3>كاميرات مراقبة + UPS خاص</h3>
                         <p>أنظمة حماية أمنية متكاملة مع منظومة طاقة</p>
                         <div class="product-price">عروض خاصة للمنازل</div>
@@ -385,27 +385,4 @@
             try {
                 const res = await fetch(`${API_URL}/delete_user`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ admin_user: adminUser, admin_pass: adminPass, username: userToDelete })
-                });
-                if(res.ok) loadAllUsers();
-            } catch (err) {
-                alert("حدث خطأ أثناء الحذف");
-            }
-        }
-
-        function sendWhatsApp(phone, debt) {
-            let formattedPhone = phone;
-            if(formattedPhone.startsWith('0')) {
-                formattedPhone = "964" + formattedPhone.substring(1);
-            }
-            const msg = `تحية طيبة\nنود اعلامكم بأن اشتراككم بخدمة الانترنت بشار الالوسي شارف على الانتهاء للاستمرار بالتمتع بخدماتنا يرجى تجديد الاشتراك من خلال التواصل معنا مباشرة\nزيارة مكتبنا\nاو عبر الماستر كارد او الزين كاش\nرقم الماستر 7116570545\nزين كاش 07814122720\nشكرا لتفهمكم\n\nطلبك الحالي: ${debt} دينار`;
-            const encodedMsg = encodeURIComponent(msg);
-            window.open(`https://wa.me/${formattedPhone}?text=${encodedMsg}`, '_blank');
-        }
-
-        function logout() {
-            location.reload();
-        }
-    </script>
-</body>
-</html>
+                    body: JSON.stringify({ admin_user: adminUser,
