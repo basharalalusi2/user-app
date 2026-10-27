@@ -38,8 +38,374 @@
         .store-section { margin-top: 25px; border-top: 2px solid rgba(255,255,255,0.2); padding-top: 20px; }
         .store-title { text-align: center; color: #00ff88; margin-bottom: 15px; font-size: 20px; }
         .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
-        .product-card { background-color: rgba(0,0,0,0.35); border-radius: 12px; padding: 18px; text-align: center; border: 1px solid rgba(255,255,255,0.2); display: flex; flex-direction: column; justify-content: space-between; }
-        .product-badge { font-size: 38px; margin-bottom: 10px; background: rgba(255,255,255,0.15); width: 65px; height: 65px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-left: auto; margin-right: auto; }
+        .product-card { background-color: rgba(0,0,0,0.35); border-radius: 12px; padding: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.2); display: flex; flex-direction: column; justify-content: space-between; }
+        .product-card img { width: 100%; height: 130px; object-fit: contain; border-radius: 8px; margin-bottom: 10px; background-color: #ffffff; padding: 5px; box-sizing: border-box; }
         .product-card h3 { font-size: 16px; margin: 8px 0; color: #ffd700; }
         .product-card p { font-size: 13px; margin: 5px 0; color: #ddd; }
-        .product-price { font-weight: bold; color: #00ff88; font-size
+        .product-price { font-weight: bold; color: #00ff88; font-size: 15px; margin: 8px 0; }
+        .btn-buy { background-color: #25d366; color: white; padding: 10px; border-radius: 6px; font-size: 14px; text-decoration: none; font-weight: bold; display: block; margin-top: 8px; }
+        .btn-buy:hover { background-color: #1ebe5d; }
+
+        /* الجدول وأزرار الإدارة */
+        .table-container { overflow-x: auto; border-radius: 8px; display: none; }
+        table { width: 100%; border-collapse: collapse; background-color: #ffffff; color: #333; font-size: 14px; text-align: center; white-space: nowrap; }
+        th, td { padding: 10px; border: 1px solid #ddd; }
+        th { background-color: #8c2ee0; color: white; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        
+        .btn-action { width: auto; padding: 6px 10px; font-size: 14px; margin: 2px; border-radius: 5px; display: inline-block; }
+        .btn-edit { background-color: #ffc107; color: black; }
+        .btn-wa { background-color: #25d366; }
+        .btn-del { background-color: #dc3545; }
+        
+        #userPanel, #adminPanel { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>بشار الالوسي<br>لخدمات الانترنت والاتصالات</h2>
+        
+        <div id="loginSection" style="max-width:400px; margin:auto;">
+            <input type="text" id="username" placeholder="اسم المستخدم (اليوزر)">
+            <input type="password" id="password" placeholder="كلمة المرور (الباسورد)">
+            <button onclick="login()">تسجيل الدخول</button>
+            <div id="messageBox"></div>
+        </div>
+
+        <!-- واجهة المشترك (بيانات الاشتراك + متجر الأجهزة والخدمات بالصور الحقيقية) -->
+        <div id="userPanel" class="result-box">
+            <h3 style="text-align: center; color: #d1a3ff;">بيانات الاشتراك</h3>
+            <div class="result-item">🟢 حالة الاشتراك: <span id="resStatus" style="font-weight: bold;"></span></div>
+            <div class="result-item">📱 رقم الهاتف: <span id="resPhone"></span></div>
+            <div class="result-item">🚀 تاريخ التفعيل: <span id="resStart"></span></div>
+            <div class="result-item">📅 تاريخ الانتهاء: <span id="resExp"></span></div>
+            <div class="result-item">💰 الديون: <span id="resDebt"></span> دينار</div>
+            
+            <!-- قسم متجر الأجهزة والخدمات بالصور الدقيقة -->
+            <div class="store-section">
+                <div class="store-title">🛒 متجر الأجهزة والخدمات المتاحة</div>
+                <div class="products-grid">
+                    
+                    <!-- 1. صحن باور بيم -->
+                    <div class="product-card">
+                        <img src="https://i.ibb.co/3ykf13r/powerbeam.png" alt="PowerBeam">
+                        <h3>صحن باور بيم (PowerBeam)</h3>
+                        <p>جهاز بث واستقبال لاسلكي عالي المسافات</p>
+                        <div class="product-price">تواصل لمعرفة السعر</div>
+                        <a class="btn-buy" href="https://wa.me/9647814122720?text=مرحباً، أريـد الاستفسار أو طلب (صحن باور بيم)" target="_blank">طلب عبر الواتساب</a>
+                    </div>
+
+                    <!-- 2. صحن لايت بيم -->
+                    <div class="product-card">
+                        <img src="https://i.ibb.co/6y4t153/litebeam.png" alt="LiteBeam">
+                        <h3>صحن لايت بيم (LiteBeam)</h3>
+                        <p>مثالي للربط السريع ونقل الإشارة للمنازل</p>
+                        <div class="product-price">تواصل لمعرفة السعر</div>
+                        <a class="btn-buy" href="https://wa.me/9647814122720?text=مرحباً، أريـد الاستفسار أو طلب (صحن لايت بيم)" target="_blank">طلب عبر الواتساب</a>
+                    </div>
+
+                    <!-- 3. راوترات الشركات -->
+                    <div class="product-card">
+                        <img src="https://i.ibb.co/0y7x20d/routers.png" alt="Routers">
+                        <h3>راوترات (TP-Link, Tenda, Deco)</h3>
+                        <p>راوترات منزلية وأنظمة مش (Mesh) لتغطية كاملة</p>
+                        <div class="product-price">متوفرة عدة موديلات</div>
+                        <a class="btn-buy" href="https://wa.me/9647814122720?text=مرحباً، أريـد الاستفسار أو طلب (راوتر منزلي)" target="_blank">طلب عبر الواتساب</a>
+                    </div>
+
+                    <!-- 4. كيبل شبكة أصلي BlueStorm -->
+                    <div class="product-card">
+                        <img src="https://i.ibb.co/4g9f23s/bluestorm.png" alt="BlueStorm Cable">
+                        <h3>كيبل شبكة أصلي (BlueStorm)</h3>
+                        <p>كيبل خارجي أصلي للصحون والراوترات مقاوم للشمس</p>
+                        <div class="product-price">حسب اللفة أو الأمتار</div>
+                        <a class="btn-buy" href="https://wa.me/9647814122720?text=مرحباً، أريـد الاستفسار أو طلب (كيبل بلو ستروم الأصلي)" target="_blank">طلب عبر الواتساب</a>
+                    </div>
+
+                    <!-- 5. يوبي إس Mini UPS -->
+                    <div class="product-card">
+                        <img src="https://i.ibb.co/2k9x15f/ups.png" alt="Mini UPS">
+                        <h3>يوبي إس (Mini UPS) للراوتر والصحن</h3>
+                        <p>يبقي الإنترنت شغالاً عند انقطاع الكهرباء</p>
+                        <div class="product-price">متوفر بقوات مختلفة</div>
+                        <a class="btn-buy" href="https://wa.me/9647814122720?text=مرحباً، أريـد الاستفسار أو طلب (Mini UPS للراوتر)" target="_blank">طلب عبر الواتساب</a>
+                    </div>
+
+                    <!-- 6. كاميرات مراقبة -->
+                    <div class="product-card">
+                        <img src="https://i.ibb.co/8K2f12x/cameras.png" alt="Cameras">
+                        <h3>كاميرات مراقبة + UPS خاص</h3>
+                        <p>أنظمة حماية أمنية متكاملة مع منظومة طاقة</p>
+                        <div class="product-price">عروض خاصة للمنازل</div>
+                        <a class="btn-buy" href="https://wa.me/9647814122720?text=مرحباً، أريـد الاستفسار أو طلب (كاميرات مراقبة)" target="_blank">طلب عبر الواتساب</a>
+                    </div>
+
+                </div>
+            </div>
+
+            <button class="btn-red" style="margin-top:25px;" onclick="logout()">تسجيل خروج</button>
+        </div>
+
+        <!-- لوحة تحكم الإدارة -->
+        <div id="adminPanel" class="admin-box">
+            <h3 style="text-align: center; color: #00ff88;">لوحة تحكم الإدارة</h3>
+            <div style="max-width:400px; margin:auto;">
+                <input type="text" id="add_user" placeholder="يوزر المشترك (للاضافة او التعديل)">
+                <input type="text" id="add_pass" placeholder="باسورد المشترك">
+                <input type="text" id="add_phone" placeholder="رقم الهاتف">
+                <label>تاريخ التفعيل:</label>
+                <input type="date" id="add_start">
+                <label>تاريخ الانتهاء:</label>
+                <input type="date" id="add_exp">
+                <input type="number" id="add_debt" placeholder="الديون (مثال: 0 أو 5000)">
+                <select id="add_status">
+                    <option value="متصل">متصل</option>
+                    <option value="غير متصل">غير متصل</option>
+                </select>
+                <button class="btn-green" onclick="addNewUser()">حفظ / تعديل بيانات المشترك</button>
+            </div>
+            
+            <!-- مربعات الإحصائيات (SAS) -->
+            <div class="dashboard-cards" id="dashCards" style="display: none;">
+                <div class="dash-card card-total">
+                    <h4>TOTAL USERS<br>المشتركين</h4>
+                    <p id="statTotal">0</p>
+                </div>
+                <div class="dash-card card-active">
+                    <h4>ACTIVE USERS<br>الفعالين</h4>
+                    <p id="statActive">0</p>
+                </div>
+                <div class="dash-card card-expiring">
+                    <h4>ABOUT TO EXPIRE<br>ينتهي قريباً</h4>
+                    <p id="statExpiring">0</p>
+                </div>
+                <div class="dash-card card-expired">
+                    <h4>EXPIRED USERS<br>المنتهين</h4>
+                    <p id="statExpired">0</p>
+                </div>
+                <div class="dash-card card-debt">
+                    <h4>BALANCE<br>إجمالي الديون</h4>
+                    <p id="statDebt">0 IQD</p>
+                </div>
+            </div>
+
+            <div class="table-container" id="usersTableContainer">
+                <table id="usersTable">
+                    <thead>
+                        <tr>
+                            <th>اليوزر</th>
+                            <th>الهاتف</th>
+                            <th>التفعيل</th>
+                            <th>الانتهاء</th>
+                            <th>الديون</th>
+                            <th>الحالة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                    </tbody>
+                </table>
+            </div>
+
+            <button class="btn-red" style="max-width:400px; display:block; margin:30px auto 0;" onclick="logout()">تسجيل خروج</button>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://basharalalusi.onrender.com';
+        
+        async function login() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const msgBox = document.getElementById('messageBox');
+            msgBox.style.display = 'block'; msgBox.style.color = '#d1a3ff'; msgBox.innerText = 'جاري التحقق...';
+
+            try {
+                const res = await fetch(`${API_URL}/login-subscriber`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: user, password: pass })
+                });
+                const data = await res.json();
+
+                if (res.ok && data.status === "success") {
+                    document.getElementById('loginSection').style.display = 'none';
+                    msgBox.style.display = 'none';
+
+                    if (data.role === "admin") {
+                        document.getElementById('adminPanel').style.display = 'block';
+                        loadAllUsers();
+                    } else {
+                        document.getElementById('resStatus').innerText = data.status_active ? "متصل" : "غير متصل";
+                        document.getElementById('resStatus').style.color = data.status_active ? "#00ff88" : "#ffcccc";
+                        document.getElementById('resPhone').innerText = data.phone;
+                        document.getElementById('resStart').innerText = data.start_date;
+                        document.getElementById('resExp').innerText = data.expiration;
+                        document.getElementById('resDebt').innerText = data.debt;
+                        document.getElementById('userPanel').style.display = 'block';
+                    }
+                } else {
+                    msgBox.style.color = '#ff4d4d'; msgBox.innerText = data.error;
+                }
+            } catch (err) {
+                msgBox.style.color = '#ff4d4d'; msgBox.innerText = 'خطأ في الاتصال بالسيرفر.';
+            }
+        }
+
+        async function addNewUser() {
+            const msgBox = document.getElementById('messageBox');
+            msgBox.style.display = 'block'; msgBox.style.color = '#d1a3ff'; msgBox.innerText = 'جاري الحفظ...';
+
+            const userData = {
+                admin_user: document.getElementById('username').value,
+                admin_pass: document.getElementById('password').value,
+                username: document.getElementById('add_user').value,
+                password: document.getElementById('add_pass').value,
+                phone: document.getElementById('add_phone').value,
+                start_date: document.getElementById('add_start').value,
+                exp_date: document.getElementById('add_exp').value,
+                debt: document.getElementById('add_debt').value || 0,
+                status: document.getElementById('add_status').value
+            };
+
+            if(!userData.username || !userData.password) {
+                msgBox.style.color = '#ff4d4d'; msgBox.innerText = '❌ الرجاء كتابة يوزر وباسورد!';
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/add_user`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+                const data = await res.json();
+                
+                if (res.ok) {
+                    msgBox.style.color = '#00ff88'; msgBox.innerText = '✅ ' + data.message;
+                    document.getElementById('add_user').value = ''; document.getElementById('add_pass').value = '';
+                    document.getElementById('add_phone').value = ''; document.getElementById('add_debt').value = '';
+                    loadAllUsers();
+                } else {
+                    msgBox.style.color = '#ff4d4d'; msgBox.innerText = '❌ ' + data.error;
+                }
+            } catch (err) {
+                msgBox.style.color = '#ff4d4d'; msgBox.innerText = 'حدث خطأ أثناء الاتصال.';
+            }
+        }
+
+        async function loadAllUsers() {
+            const adminUser = document.getElementById('username').value;
+            const adminPass = document.getElementById('password').value;
+            
+            try {
+                const res = await fetch(`${API_URL}/get_all_users`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ admin_user: adminUser, admin_pass: adminPass })
+                });
+                const data = await res.json();
+                
+                if (res.ok && data.status === "success") {
+                    const tbody = document.getElementById('usersTableBody');
+                    tbody.innerHTML = ''; 
+                    
+                    document.getElementById('usersTableContainer').style.display = 'block';
+                    document.getElementById('dashCards').style.display = 'flex';
+
+                    const today = new Date();
+                    today.setHours(0,0,0,0);
+
+                    let totalUsers = data.users.length;
+                    let activeUsers = 0;
+                    let expiredUsers = 0;
+                    let expiringSoon = 0;
+                    let totalDebtAmount = 0;
+
+                    data.users.forEach(u => {
+                        const expDate = new Date(u.exp_date);
+                        const diffTime = expDate - today;
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                        totalDebtAmount += parseInt(u.debt) || 0;
+
+                        let dateColor = "blue"; 
+                        if (diffDays < 0) {
+                            dateColor = "red"; 
+                            expiredUsers++; 
+                        } else if (diffDays >= 0 && diffDays <= 3) {
+                            dateColor = "orange"; 
+                            expiringSoon++; 
+                            activeUsers++; 
+                        } else {
+                            activeUsers++; 
+                        }
+
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${u.username}</td>
+                            <td style="direction:ltr;">${u.phone}</td>
+                            <td>${u.start_date}</td>
+                            <td style="color: ${dateColor}; font-weight: bold;">${u.exp_date}</td>
+                            <td style="color:red; font-weight:bold;">${u.debt}</td>
+                            <td style="color: ${u.status === 'متصل' ? 'green' : 'gray'}; font-weight:bold;">${u.status}</td>
+                            <td>
+                                <button class="btn-action btn-edit" onclick="editUser('${u.username}', '${u.password}', '${u.phone}', '${u.start_date}', '${u.exp_date}', '${u.debt}', '${u.status}')">تعديل</button>
+                                <button class="btn-action btn-wa" onclick="sendWhatsApp('${u.phone}', '${u.debt}')">واتساب</button>
+                                <button class="btn-action btn-del" onclick="deleteUser('${u.username}')">حذف</button>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+
+                    document.getElementById('statTotal').innerText = totalUsers;
+                    document.getElementById('statActive').innerText = activeUsers;
+                    document.getElementById('statExpiring').innerText = expiringSoon;
+                    document.getElementById('statExpired').innerText = expiredUsers;
+                    document.getElementById('statDebt').innerText = totalDebtAmount.toLocaleString('en-US') + " IQD";
+                }
+            } catch (err) {
+                console.error("خطأ في جلب بيانات الجدول");
+            }
+        }
+
+        function editUser(user, pass, phone, start, exp, debt, status) {
+            document.getElementById('add_user').value = user;
+            document.getElementById('add_pass').value = pass;
+            document.getElementById('add_phone').value = phone;
+            document.getElementById('add_start').value = start;
+            document.getElementById('add_exp').value = exp;
+            document.getElementById('add_debt').value = debt;
+            document.getElementById('add_status').value = status;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function deleteUser(userToDelete) {
+            if(!confirm(`هل أنت متأكد من حذف المشترك: ${userToDelete} ؟`)) return;
+            const adminUser = document.getElementById('username').value;
+            const adminPass = document.getElementById('password').value;
+            try {
+                const res = await fetch(`${API_URL}/delete_user`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ admin_user: adminUser, admin_pass: adminPass, username: userToDelete })
+                });
+                if(res.ok) loadAllUsers();
+            } catch (err) {
+                alert("حدث خطأ أثناء الحذف");
+            }
+        }
+
+        function sendWhatsApp(phone, debt) {
+            let formattedPhone = phone;
+            if(formattedPhone.startsWith('0')) {
+                formattedPhone = "964" + formattedPhone.substring(1);
+            }
+            const msg = `تحية طيبة\nنود اعلامكم بأن اشتراككم بخدمة الانترنت بشار الالوسي شارف على الانتهاء للاستمرار بالتمتع بخدماتنا يرجى تجديد الاشتراك من خلال التواصل معنا مباشرة\nزيارة مكتبنا\nاو عبر الماستر كارد او الزين كاش\nرقم الماستر 7116570545\nزين كاش 07814122720\nشكرا لتفهمكم\n\nطلبك الحالي: ${debt} دينار`;
+            const encodedMsg = encodeURIComponent(msg);
+            window.open(`https://wa.me/${formattedPhone}?text=${encodedMsg}`, '_blank');
+        }
+
+        function logout() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>
