@@ -8,7 +8,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@500;700&display=swap');
         
         body { background-color: #3b0066; color: #ffffff; font-family: 'Tajawal', sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .container { width: 98%; max-width: 800px; margin-top: 30px; background-color: #4d0085; padding: 25px 15px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .container { width: 98%; max-width: 900px; margin-top: 30px; background-color: #4d0085; padding: 25px 15px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         h2 { text-align: center; margin-bottom: 25px; font-size: 22px; }
         input, select { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #7a1fb8; border-radius: 8px; background-color: #ffffff; color: #333; font-size: 16px; font-family: 'Tajawal', sans-serif; box-sizing: border-box; }
         button { width: 100%; padding: 14px; background-color: #8c2ee0; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; font-family: 'Tajawal', sans-serif; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
@@ -20,8 +20,20 @@
         .result-item { margin-bottom: 10px; font-size: 16px; }
         #messageBox { text-align: center; margin-top: 10px; font-weight: bold; display: none; }
         
+        /* تصميم بطاقات إحصائيات SAS */
+        .dashboard-cards { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 25px; margin-bottom: 20px; justify-content: center; }
+        .dash-card { flex: 1 1 150px; padding: 20px 10px; border-radius: 8px; text-align: center; color: white; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .dash-card h4 { margin: 0 0 10px 0; font-size: 14px; opacity: 0.9; }
+        .dash-card p { margin: 0; font-size: 24px; }
+        
+        .card-total { background-color: #43649e; }      /* أزرق - إجمالي المشتركين */
+        .card-active { background-color: #49b56d; }     /* أخضر - المشتركين الفعالين */
+        .card-expiring { background-color: #f1b31c; }   /* أصفر - شارف على الانتهاء (3 أيام) */
+        .card-expired { background-color: #e5625c; }    /* أحمر - المنتهين */
+        .card-debt { background-color: #4e65a5; }       /* أزرق غامق - إجمالي الديون */
+
         /* تصميم الجدول والأزرار المصغرة */
-        .table-container { overflow-x: auto; margin-top: 25px; border-radius: 8px; display: none; }
+        .table-container { overflow-x: auto; border-radius: 8px; display: none; }
         table { width: 100%; border-collapse: collapse; background-color: #ffffff; color: #333; font-size: 14px; text-align: center; white-space: nowrap; }
         th, td { padding: 10px; border: 1px solid #ddd; }
         th { background-color: #8c2ee0; color: white; }
@@ -32,7 +44,6 @@
         .btn-wa { background-color: #25d366; }
         .btn-del { background-color: #dc3545; }
         
-        #userCountTitle { text-align: center; color: #00ff88; margin-top: 20px; display: none; }
         #userPanel, #adminPanel { display: none; }
     </style>
 </head>
@@ -59,7 +70,7 @@
         </div>
 
         <div id="adminPanel" class="admin-box">
-            <h3 style="text-align: center; color: #00ff88;">لوحة تحكم المدير</h3>
+            <h3 style="text-align: center; color: #00ff88;">لوحة تحكم الإدارة</h3>
             <div style="max-width:400px; margin:auto;">
                 <input type="text" id="add_user" placeholder="يوزر المشترك (للاضافة او التعديل)">
                 <input type="text" id="add_pass" placeholder="باسورد المشترك">
@@ -76,7 +87,30 @@
                 <button class="btn-green" onclick="addNewUser()">حفظ / تعديل بيانات المشترك</button>
             </div>
             
-            <h3 id="userCountTitle">إجمالي المشتركين: <span id="totalUsersCount">0</span></h3>
+            <!-- مربعات الإحصائيات (شكل ساس) -->
+            <div class="dashboard-cards" id="dashCards" style="display: none;">
+                <div class="dash-card card-total">
+                    <h4>TOTAL USERS<br>المشتركين</h4>
+                    <p id="statTotal">0</p>
+                </div>
+                <div class="dash-card card-active">
+                    <h4>ACTIVE USERS<br>الفعالين</h4>
+                    <p id="statActive">0</p>
+                </div>
+                <div class="dash-card card-expiring">
+                    <h4>ABOUT TO EXPIRE<br>ينتهي قريباً</h4>
+                    <p id="statExpiring">0</p>
+                </div>
+                <div class="dash-card card-expired">
+                    <h4>EXPIRED USERS<br>المنتهين</h4>
+                    <p id="statExpired">0</p>
+                </div>
+                <div class="dash-card card-debt">
+                    <h4>BALANCE<br>إجمالي الديون</h4>
+                    <p id="statDebt">0 IQD</p>
+                </div>
+            </div>
+
             <div class="table-container" id="usersTableContainer">
                 <table id="usersTable">
                     <thead>
@@ -95,7 +129,7 @@
                 </table>
             </div>
 
-            <button class="btn-red" style="max-width:400px; display:block; margin:20px auto 0;" onclick="logout()">تسجيل خروج</button>
+            <button class="btn-red" style="max-width:400px; display:block; margin:30px auto 0;" onclick="logout()">تسجيل خروج</button>
         </div>
     </div>
 
@@ -151,7 +185,7 @@
                 phone: document.getElementById('add_phone').value,
                 start_date: document.getElementById('add_start').value,
                 exp_date: document.getElementById('add_exp').value,
-                debt: document.getElementById('add_debt').value,
+                debt: document.getElementById('add_debt').value || 0,
                 status: document.getElementById('add_status').value
             };
 
@@ -169,7 +203,6 @@
                 
                 if (res.ok) {
                     msgBox.style.color = '#00ff88'; msgBox.innerText = '✅ ' + data.message;
-                    // تفريغ الحقول بعد الحفظ
                     document.getElementById('add_user').value = ''; document.getElementById('add_pass').value = '';
                     document.getElementById('add_phone').value = ''; document.getElementById('add_debt').value = '';
                     loadAllUsers();
@@ -196,24 +229,37 @@
                     const tbody = document.getElementById('usersTableBody');
                     tbody.innerHTML = ''; 
                     
-                    document.getElementById('totalUsersCount').innerText = data.users.length;
-                    document.getElementById('userCountTitle').style.display = 'block';
                     document.getElementById('usersTableContainer').style.display = 'block';
+                    document.getElementById('dashCards').style.display = 'flex';
 
                     const today = new Date();
                     today.setHours(0,0,0,0);
 
+                    // متغيرات حساب الإحصائيات
+                    let totalUsers = data.users.length;
+                    let activeUsers = 0;
+                    let expiredUsers = 0;
+                    let expiringSoon = 0;
+                    let totalDebtAmount = 0;
+
                     data.users.forEach(u => {
-                        // حساب فرق الأيام لمعرفة اللون
                         const expDate = new Date(u.exp_date);
                         const diffTime = expDate - today;
                         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-                        let dateColor = "blue"; // أزرق = فعال
+                        // جمع الديون
+                        totalDebtAmount += parseInt(u.debt) || 0;
+
+                        let dateColor = "blue"; 
                         if (diffDays < 0) {
-                            dateColor = "red"; // أحمر = منتهي
-                        } else if (diffDays === 0 || diffDays === 1) {
-                            dateColor = "orange"; // برتقالي = ينتهي اليوم أو غداً
+                            dateColor = "red"; 
+                            expiredUsers++; // حساب المنتهين
+                        } else if (diffDays >= 0 && diffDays <= 3) {
+                            dateColor = "orange"; 
+                            expiringSoon++; // حساب الشارفين على الانتهاء
+                            activeUsers++; // لا يزال فعالاً
+                        } else {
+                            activeUsers++; // فعال طبيعي
                         }
 
                         const tr = document.createElement('tr');
@@ -232,13 +278,21 @@
                         `;
                         tbody.appendChild(tr);
                     });
+
+                    // تحديث المربعات الملونة (SAS Design)
+                    document.getElementById('statTotal').innerText = totalUsers;
+                    document.getElementById('statActive').innerText = activeUsers;
+                    document.getElementById('statExpiring').innerText = expiringSoon;
+                    document.getElementById('statExpired').innerText = expiredUsers;
+                    
+                    // تنسيق مبلغ الديون بفاصلة الألوف
+                    document.getElementById('statDebt').innerText = totalDebtAmount.toLocaleString('en-US') + " IQD";
                 }
             } catch (err) {
                 console.error("خطأ في جلب بيانات الجدول");
             }
         }
 
-        // دالة التعديل: تسحب بيانات المشترك وتضعها في الخانات العلوية
         function editUser(user, pass, phone, start, exp, debt, status) {
             document.getElementById('add_user').value = user;
             document.getElementById('add_pass').value = pass;
@@ -247,16 +301,13 @@
             document.getElementById('add_exp').value = exp;
             document.getElementById('add_debt').value = debt;
             document.getElementById('add_status').value = status;
-            window.scrollTo({ top: 0, behavior: 'smooth' }); // الصعود للأعلى
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // دالة الحذف
         async function deleteUser(userToDelete) {
             if(!confirm(`هل أنت متأكد من حذف المشترك: ${userToDelete} ؟`)) return;
-            
             const adminUser = document.getElementById('username').value;
             const adminPass = document.getElementById('password').value;
-
             try {
                 const res = await fetch(`${API_URL}/delete_user`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -268,16 +319,12 @@
             }
         }
 
-        // دالة الواتساب الجاهزة
         function sendWhatsApp(phone, debt) {
             let formattedPhone = phone;
-            // تحويل الرقم إلى الصيغة الدولية (استبدال الصفر بـ 964)
             if(formattedPhone.startsWith('0')) {
                 formattedPhone = "964" + formattedPhone.substring(1);
             }
-            
             const msg = `تحية طيبة\nنود اعلامكم بأن اشتراككم بخدمة الانترنت بشار الالوسي شارف على الانتهاء للاستمرار بالتمتع بخدماتنا يرجى تجديد الاشتراك من خلال التواصل معنا مباشرة\nزيارة مكتبنا\nاو عبر الماستر كارد او الزين كاش\nرقم الماستر 7116570545\nزين كاش 07814122720\nشكرا لتفهمكم\n\nطلبك الحالي: ${debt} دينار`;
-            
             const encodedMsg = encodeURIComponent(msg);
             window.open(`https://wa.me/${formattedPhone}?text=${encodedMsg}`, '_blank');
         }
