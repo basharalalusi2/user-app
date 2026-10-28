@@ -21,12 +21,10 @@
         .result-item { margin-bottom: 10px; font-size: 16px; }
         #messageBox { text-align: center; margin-top: 10px; font-weight: bold; display: none; }
         
-        /* تبديل الأدوار */
         .role-switch { display: flex; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 5px; margin-bottom: 20px; max-width: 400px; margin-left: auto; margin-right: auto; }
         .role-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; background: transparent; color: #bbb; font-size: 16px; font-weight: bold; font-family: 'Tajawal', sans-serif; cursor: pointer; transition: 0.3s; }
         .role-btn.active { background-color: #00ff88; color: #110022; box-shadow: 0 2px 10px rgba(0,255,136,0.4); }
 
-        /* البطاقات الاحترافية المنظمة للإحصائيات */
         .dashboard-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 25px; margin-bottom: 20px; }
         .dash-card { padding: 15px 10px; border-radius: 10px; text-align: center; color: white; font-weight: bold; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
         .dash-card h4 { margin: 0 0 8px 0; font-size: 13px; opacity: 0.95; }
@@ -152,7 +150,6 @@
                     <button class="btn-green" id="saveUserBtn" onclick="addNewUser()">حفظ مشترك جديد</button>
                 </div>
                 
-                <!-- البطاقات الإحصائية المنظمة -->
                 <div class="dashboard-cards" id="dashCards" style="display: grid;">
                     <div class="dash-card card-total"><h4>TOTAL USERS<br>المشتركين</h4><p id="statTotal">0</p></div>
                     <div class="dash-card card-active"><h4>ACTIVE USERS<br>الفعالين</h4><p id="statActive">0</p></div>
@@ -214,7 +211,7 @@
             db = firebase.firestore();
         } catch(e) { console.warn("Cloud connection error"); }
 
-        const PKEY = 'bashar_store_prods_v16';
+        const PKEY = 'bashar_store_prods_v17';
         const defaultProducts = [
             {name: 'راوترات (TP-Link, Tenda)', desc: 'راوترات منزلية وأنظمة تغطية', price: 'متوفرة عدة موديلات', icon: '🌐'},
             {name: 'صحن لايت بيم / باور بيم', desc: 'أجهزة بث واستقبال لاسلكي', price: 'تواصل لمعرفة السعر', icon: '📡'},
@@ -244,194 +241,4 @@
             const user = document.getElementById('username').value.trim();
             const pass = document.getElementById('password').value.trim();
             const msgBox = document.getElementById('messageBox');
-            msgBox.style.display = 'block'; msgBox.style.color = '#ffd700'; msgBox.innerText = 'جاري التحقق...';
-
-            if(!user || !pass) {
-                msgBox.style.color = '#ff4d4d'; msgBox.innerText = '❌ يرجى ادخال اليوزر والباسورد';
-                return;
-            }
-
-            if(currentRole === 'admin') {
-                if(user === 'bashar@dsc' && pass === 'bashar2000') {
-                    document.getElementById('loginSection').style.display = 'none';
-                    msgBox.style.display = 'none';
-                    document.getElementById('adminPanel').style.display = 'block';
-                    loadAllUsers();
-                    loadAdminStore();
-                    return;
-                } else {
-                    msgBox.style.color = '#ff4d4d'; msgBox.innerText = '❌ يوزر أو باسورد المدير خطأ';
-                    return;
-                }
-            }
-
-            try {
-                let found = null;
-                if(db) {
-                    const snap = await db.collection('subscribers').where('username', '==', user).get();
-                    snap.forEach(d => { const x = { id: d.id, ...d.data() }; if(String(x.password) === String(pass)) found = x; });
-                }
-
-                if(found) {
-                    document.getElementById('loginSection').style.display = 'none';
-                    msgBox.style.display = 'none';
-                    const displayName = found.name ? `${found.name} (${found.username})` : found.username;
-                    document.getElementById('welcomeTitle').innerText = `👤 أهلاً بك: ${displayName}`;
-                    document.getElementById('resStatus').innerText = found.status || "متصل";
-                    document.getElementById('resPhone').innerText = found.phone || '—';
-                    document.getElementById('resStart').innerText = found.start_date || '—';
-                    document.getElementById('resExp').innerText = found.exp_date || '—';
-                    document.getElementById('resDebt').innerText = found.debt || '0';
-                    loadUserStore();
-                    document.getElementById('userPanel').style.display = 'block';
-                } else {
-                    msgBox.style.color = '#ff4d4d'; msgBox.innerText = '❌ خطأ في يوزر أو باسورد المشترك';
-                }
-            } catch(err) {
-                msgBox.style.color = '#ff4d4d'; msgBox.innerText = '⚠️ خطأ بالاتصال بالسحابة';
-            }
-        }
-
-        document.getElementById('username').addEventListener('keypress', function(e) { if (e.key === 'Enter') { login(); } });
-        document.getElementById('password').addEventListener('keypress', function(e) { if (e.key === 'Enter') { login(); } });
-
-        async function addNewUser() {
-            const docId = document.getElementById('edit_doc_id').value;
-            const userData = {
-                username: document.getElementById('add_user').value.trim(),
-                password: document.getElementById('add_pass').value.trim(),
-                name: document.getElementById('add_name').value.trim(),
-                phone: document.getElementById('add_phone').value.trim(),
-                start_date: document.getElementById('add_start').value,
-                exp_date: document.getElementById('add_exp').value,
-                debt: document.getElementById('add_debt').value || 0,
-                status: document.getElementById('add_status').value
-            };
-
-            if(!userData.username || !userData.password) {
-                alert('❌ يرجى كتابة اليوزر والباسورد!');
-                return;
-            }
-
-            try {
-                if(docId) {
-                    const snap = await db.collection('subscribers').where('username', '==', docId).get();
-                    snap.forEach(async d => { await d.ref.update(userData); });
-                } else {
-                    await db.collection('subscribers').add(userData);
-                }
-                alert('✅ تم الحفظ بنجاح');
-                resetUserForm();
-                loadAllUsers();
-            } catch(e) {
-                alert('❌ خطأ أثناء الحفظ بالسحابة');
-            }
-        }
-
-        function resetUserForm() {
-            document.getElementById('edit_doc_id').value = '';
-            document.getElementById('add_user').value = '';
-            document.getElementById('add_pass').value = '';
-            document.getElementById('add_name').value = '';
-            document.getElementById('add_phone').value = '';
-            document.getElementById('add_start').value = '';
-            document.getElementById('add_exp').value = '';
-            document.getElementById('add_debt').value = '';
-            document.getElementById('saveUserBtn').innerText = 'حفظ مشترك جديد';
-        }
-
-        async function editUserPrompt(username) {
-            let user = null;
-            if(db) {
-                const snap = await db.collection('subscribers').where('username', '==', username).get();
-                snap.forEach(d => { user = { id: d.id, ...d.data() }; });
-            }
-            if(user) {
-                document.getElementById('edit_doc_id').value = user.username;
-                document.getElementById('add_user').value = user.username || '';
-                document.getElementById('add_pass').value = user.password || '';
-                document.getElementById('add_name').value = user.name || '';
-                document.getElementById('add_phone').value = user.phone || '';
-                document.getElementById('add_start').value = user.start_date || '';
-                document.getElementById('add_exp').value = user.exp_date || '';
-                document.getElementById('add_debt').value = user.debt || 0;
-                document.getElementById('add_status').value = user.status || 'متصل';
-                document.getElementById('saveUserBtn').innerText = 'تعديل البيانات';
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
-
-        async function loadAllUsers() {
-            let users = [];
-            if(db) {
-                const snap = await db.collection('subscribers').get();
-                users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            }
-            const tbody = document.getElementById('usersTableBody');
-            tbody.innerHTML = '';
-            
-            let totalUsers = users.length;
-            let activeUsers = 0;
-            let expiringSoon = 0;
-            let expiredUsers = 0;
-            let totalDebtAmount = 0;
-
-            const today = new Date();
-
-            users.forEach(u => {
-                totalDebtAmount += parseInt(u.debt) || 0;
-                activeUsers++;
-
-                if(u.exp_date) {
-                    const expDate = new Date(u.exp_date);
-                    const diffDays = Math.ceil((expDate - today) / (1000 * 60 * 60 * 24));
-                    if(diffDays < 0) {
-                        expiredUsers++;
-                    } else if(diffDays <= 3) {
-                        expiringSoon++;
-                    }
-                }
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><b>${u.username}</b></td>
-                    <td>${u.name || '—'}</td>
-                    <td style="direction:ltr;">${u.phone || '—'}</td>
-                    <td>${u.exp_date || '—'}</td>
-                    <td style="color:red; font-weight:bold;">${u.debt || 0}</td>
-                    <td style="color: green; font-weight:bold;">${u.status || 'متصل'}</td>
-                    <td>
-                        <button class="btn-action btn-edit" onclick="editUserPrompt('${u.username}')">تعديل</button>
-                        <button class="btn-action btn-wa" onclick="sendWhatsApp('${u.phone}', '${u.debt}')">واتساب</button>
-                        <button class="btn-action btn-del" onclick="deleteUser('${u.username}')">حذف</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            document.getElementById('statTotal').innerText = totalUsers;
-            document.getElementById('statActive').innerText = activeUsers;
-            document.getElementById('statExpiring').innerText = expiringSoon;
-            document.getElementById('statExpired').innerText = expiredUsers;
-            document.getElementById('statDebt').innerText = totalDebtAmount.toLocaleString() + " IQD";
-        }
-
-        async function deleteUser(username) {
-            if(!confirm(`حذف المشترك: ${username} ؟`)) return;
-            if(db) {
-                const snap = await db.collection('subscribers').where('username', '==', username).get();
-                snap.forEach(async d => { await d.ref.delete(); });
-            }
-            loadAllUsers();
-        }
-
-        function sendWhatsApp(phone, debt) {
-            if(!phone) { alert('لا يوجد رقم هاتف'); return; }
-            let formattedPhone = phone.startsWith('0') ? "964" + phone.substring(1) : phone;
-            const msg = `تحية طيبة\nنود اعلامكم بأن اشتراككم بخدمة الانترنت بشار الالوسي شارف على الانتهاء يرجى التجديد\nالمبلغ: ${debt} دينار`;
-            window.open(`https://wa.me/${formattedPhone}?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-
-        function switchAdminTab(tab) {
-            if(tab === 'users') {
-                document.getElementById('adminUsersSection
+            msgBox.
