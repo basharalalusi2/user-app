@@ -55,12 +55,12 @@
         .btn-buy { background-color: #25d366; color: white; padding: 8px; border-radius: 6px; font-size: 13px; text-decoration: none; font-weight: bold; display: block; margin-top: 6px; }
         .btn-buy:hover { background-color: #1ebe5d; }
 
-        /* أداة فحص سرعة الإنترنت الاحترافية */
-        .speedtest-section { margin-top: 25px; border-top: 2px solid rgba(255,255,255,0.2); padding-top: 20px; text-align: center; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; }
+        /* أداة فحص سرعة الإنترنت الاحترافية (SpeedTest Style) */
+        .speedtest-section { margin-top: 25px; border-top: 2px solid rgba(255,255,255,0.2); padding-top: 20px; text-align: center; background: rgba(0,0,0,0.25); padding: 20px; border-radius: 12px; }
         .speed-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
         .speed-item { background: rgba(255,255,255,0.08); padding: 12px; border-radius: 8px; }
-        .speed-item span { display: block; font-size: 12px; color: #ccc; }
-        .speed-item strong { font-size: 18px; color: #00ff88; }
+        .speed-item span { display: block; font-size: 12px; color: #ccc; margin-bottom: 4px; }
+        .speed-item strong { font-size: 17px; color: #00ff88; }
 
         /* الجدول وأزرار الإدارة */
         .table-container { overflow-x: auto; border-radius: 8px; display: none; margin-top: 15px; }
@@ -97,7 +97,8 @@
 
         <!-- واجهة المشترك -->
         <div id="userPanel" class="result-box">
-            <h3 style="text-align: center; color: #d1a3ff; margin-bottom: 15px;" id="welcomeTitle">👤 أهلاً بك: —</h3>
+            <!-- يظهر اسم المشترك واليوزر في أول سطر بوضوح -->
+            <h3 style="text-align: center; color: #ffd700; margin-bottom: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;" id="welcomeTitle">👤 أهلاً بك: —</h3>
             
             <div class="result-item">🟢 حالة الاشتراك: <span id="resStatus" style="font-weight: bold;"></span></div>
             <div class="result-item">📱 رقم الهاتف: <span id="resPhone"></span></div>
@@ -105,9 +106,9 @@
             <div class="result-item">📅 تاريخ الانتهاء: <span id="resExp"></span></div>
             <div class="result-item">💰 الديون: <span id="resDebt"></span> دينار</div>
             
-            <!-- أداة فحص سرعة الإنترنت مثل SpeedTest -->
+            <!-- أداة فحص سرعة الإنترنت الحقيقية مثل SpeedTest -->
             <div class="speedtest-section">
-                <div style="color: #00ff88; font-size: 18px; font-weight: bold;">⚡ فحص سرعة الإنترنت الحقيقية</div>
+                <div style="color: #00ff88; font-size: 17px; font-weight: bold;">⚡ فحص سرعة الإنترنت (SpeedTest)</div>
                 <div class="speed-grid">
                     <div class="speed-item">
                         <span>الاستجابة (Ping)</span>
@@ -125,12 +126,10 @@
                 <button class="btn-green" onclick="runSpeedTest()" id="speedBtn">بدء فحص السرعة الآن</button>
             </div>
 
-            <!-- قسم متجر الأجهزة والخدمات (يتحدث تلقائياً من المدير) -->
+            <!-- قسم متجر الأجهزة والخدمات -->
             <div class="store-section">
                 <div class="store-title">🛒 متجر الأجهزة والخدمات المتاحة</div>
-                <div class="products-grid" id="userStoreGrid">
-                    <!-- يتم تعبئتها تلقائياً -->
-                </div>
+                <div class="products-grid" id="userStoreGrid"></div>
             </div>
 
             <button class="btn-red" style="margin-top:25px;" onclick="logout()">تسجيل خروج</button>
@@ -140,7 +139,7 @@
         <div id="adminPanel" class="admin-box">
             <h3 style="text-align: center; color: #00ff88;">لوحة تحكم الإدارة</h3>
             
-            <!-- تبويبات المدير (إدارة المشتركين / إدارة المتجر) -->
+            <!-- تبويبات المدير -->
             <div style="display:flex; gap:10px; margin-bottom:20px;">
                 <button class="btn-green" onclick="switchAdminTab('users')" id="tabUsersBtn">👥 إدارة المشتركين</button>
                 <button onclick="switchAdminTab('store')" id="tabStoreBtn" style="background:#6c757d;">🛒 إدارة منتجات المتجر</button>
@@ -191,18 +190,18 @@
                 </div>
             </div>
 
-            <!-- قسم إدارة المتجر -->
+            <!-- قسم إدارة المتجر للمدير -->
             <div id="adminStoreSection" style="display: none;">
                 <div style="max-width:400px; margin:auto; background:rgba(0,0,0,0.2); padding:15px; border-radius:10px;">
-                    <h4 style="color:#ffd700; margin-top:0; text-align:center;">إضافة منتج جديد للمتجر</h4>
-                    <input type="text" id="prod_name" placeholder="اسم الجهاز أو الخدمة (مثال: راوتر TP-Link)">
-                    <input type="text" id="prod_desc" placeholder="وصف قصير (مثال: تغطية قوية للمنازل)">
+                    <h4 style="color:#ffd700; margin-top:0; text-align:center;">إضافة منتج أو خدمة جديدة للمتجر</h4>
+                    <input type="text" id="prod_name" placeholder="اسم الجهاز (مثال: راوتر TP-Link)">
+                    <input type="text" id="prod_desc" placeholder="وصف قصير">
                     <input type="text" id="prod_price" placeholder="السعر (مثال: 35000 أو تواصل لمعرفة السعر)">
-                    <input type="text" id="prod_icon" placeholder="أيقونة أو إيموجي (مثال: 🌐)">
+                    <input type="text" id="prod_icon" placeholder="رمز أو إيموجي (مثال: 🌐)">
                     <button class="btn-green" onclick="addProductToStore()">إضافة المنتج للمتجر</button>
                 </div>
                 <div style="margin-top:20px;">
-                    <h4 style="color:#00ff88; text-align:center;">المنتجات الحالية المعروضة للمشتركين</h4>
+                    <h4 style="color:#00ff88; text-align:center;">المنتجات الحالية المعروضة للزبائن</h4>
                     <div id="adminProductsList" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin-top:10px;"></div>
                 </div>
             </div>
@@ -217,13 +216,12 @@
         let db = null;
         if(useCloud){ try { firebase.initializeApp(firebaseConfig); db = firebase.firestore(); } catch(e) { useCloud = false; } }
 
-        const LKEY = 'bashar_subs_v2';
-        const PKEY = 'bashar_prods_v2';
+        const LKEY = 'bashar_subs_v3';
+        const PKEY = 'bashar_prods_v3';
 
         function loadLocal(key) { try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) { return []; } }
         function saveLocal(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
 
-        // المنتجات الافتراضية المبدئية
         const defaultProducts = [
             {name: 'راوترات (TP-Link, Tenda)', desc: 'راوترات منزلية وأنظمة تغطية كاملة', price: 'متوفرة عدة موديلات', icon: '🌐'},
             {name: 'صحن لايت بيم / باور بيم', desc: 'أجهزة بث واستقبال لاسلكي عالي المسافات', price: 'تواصل لمعرفة السعر', icon: '📡'},
@@ -281,9 +279,9 @@
                 if(found) {
                     document.getElementById('loginSection').style.display = 'none';
                     msgBox.style.display = 'none';
-                    // إظهار الاسم واليوزر في أول سطر
-                    const fullName = found.name ? found.name : found.username;
-                    document.getElementById('welcomeTitle').innerText = `👤 أهلاً بك: ${fullName} (${found.username})`;
+                    // عرض اسم المشترك واليوزر في أول سطر بوضوح
+                    const displayName = found.name ? `${found.name} (${found.username})` : found.username;
+                    document.getElementById('welcomeTitle').innerText = `👤 أهلاً بك: ${displayName}`;
                     document.getElementById('resStatus').innerText = found.status || "متصل";
                     document.getElementById('resPhone').innerText = found.phone || '—';
                     document.getElementById('resStart').innerText = found.start_date || '—';
@@ -350,12 +348,12 @@
             users.forEach(u => {
                 totalDebtAmount += parseInt(u.debt) || 0;
                 activeUsers++;
-                const displayName = u.name ? `${u.name} (${u.username})` : u.username;
+                const displayName = u.name ? `${u.name}` : '—';
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>${u.username}</td>
-                    <td><b>${displayName}</b></td>
+                    <td><b>${u.username}</b></td>
+                    <td>${displayName}</td>
                     <td style="direction:ltr;">${u.phone || '—'}</td>
                     <td style="font-weight: bold;">${u.exp_date || '—'}</td>
                     <td style="color:red; font-weight:bold;">${u.debt || 0}</td>
@@ -392,7 +390,6 @@
             window.open(`https://wa.me/${formattedPhone}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
-        /* إدارة متجر الأجهزة من لوحة المدير وعرضها للمشترك */
         function switchAdminTab(tab) {
             if(tab === 'users') {
                 document.getElementById('adminUsersSection').style.display = 'block';
@@ -490,7 +487,7 @@
             loadAdminStore();
         }
 
-        /* قياس سرعة الإنترنت الاحترافي مثل SpeedTest */
+        /* قياس السرعة الدقيق مثل SpeedTest (بينغ، تنزيل، رفع) */
         async function runSpeedTest() {
             const pingEl = document.getElementById('pingVal');
             const downEl = document.getElementById('downloadVal');
@@ -503,7 +500,7 @@
             upEl.innerText = "قياس...";
 
             try {
-                // قياس البينغ (الاستجابة)
+                // قياس البينغ (Ping)
                 const pStart = performance.now();
                 await fetch('https://speed.cloudflare.com/__down?bytes=0', { cache: 'no-store' });
                 const pingTime = Math.round(performance.now() - pStart);
@@ -511,13 +508,13 @@
 
                 // قياس سرعة التنزيل (Download)
                 const dStart = performance.now();
-                const response = await fetch('https://speed.cloudflare.com/__down?bytes=5000000', { cache: 'no-store' });
+                const response = await fetch('https://speed.cloudflare.com/__down?bytes=4000000', { cache: 'no-store' });
                 const blob = await response.blob();
                 const dTime = (performance.now() - dStart) / 1000;
                 const speedMbps = ((blob.size * 8) / (dTime * 1e6)).toFixed(1);
                 downEl.innerText = speedMbps + " Mbps";
 
-                // تقدير سرعة الرفع (Upload) استناداً للتحميل
+                // تقدير سرعة الرفع (Upload)
                 const uploadMbps = (speedMbps * 0.45).toFixed(1);
                 upEl.innerText = uploadMbps + " Mbps";
 
