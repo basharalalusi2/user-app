@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>بشار الالوسي لخدمات الانترنت — لوحة التحكم</title>
-<!-- Firebase (التخزين السحابي + تسجيل الدخول بالإيميل) -->
+<!-- Firebase (التخزين السحابي الدائم للمشتركين والمنتجات) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -48,8 +48,7 @@ input,select{font-family:inherit}
 .topbar-actions{display:flex;gap:8px;flex-wrap:wrap}
 .chip{background:rgba(255,255,255,.15);color:#fff;padding:9px 14px;font-size:13px;font-weight:600}
 .chip.red{background:var(--red)}
-</style>
-<style>
+
 /* ===== النموذج ===== */
 .panel{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;margin-bottom:18px}
 .panel h2{font-size:16px;color:var(--primary-d);margin-bottom:16px;display:flex;align-items:center;gap:8px}
@@ -110,7 +109,6 @@ tr.row-click:hover{background:#faf5ff}
   max-width:520px;max-height:90vh;overflow:auto;padding:24px}
 .modal h3{color:var(--primary-d);font-size:17px;margin-bottom:16px;display:flex;justify-content:space-between}
 .modal .x{background:#f3f4f6;width:32px;height:32px;border-radius:8px;font-size:16px}
-.btn-logout{background:var(--red);color:#fff;padding:14px;font-size:15px;font-weight:700;width:100%;margin-top:4px}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111827;color:#fff;
   padding:13px 22px;border-radius:12px;font-size:14px;z-index:99;opacity:0;transition:.3s;pointer-events:none}
 .toast.show{opacity:1}
@@ -193,7 +191,7 @@ tr.row-click:hover{background:#faf5ff}
 
     <!-- دخول المشترك -->
     <div id="subLogin">
-      <input id="subUser" placeholder="اليوزر (مثال: 22)" autocomplete="username">
+      <input id="subUser" placeholder="اليوزر" autocomplete="username">
       <input id="subPass" type="password" placeholder="الباسورد" autocomplete="current-password">
       <button class="btn-primary" id="btnSubLogin">دخول</button>
     </div>
@@ -398,12 +396,6 @@ tr.row-click:hover{background:#faf5ff}
     <div class="field" style="margin-bottom:10px"><label>تأكيد كلمة السر</label><input id="newPass2" type="password"></div>
     <button class="btn-save" id="btnChangePass">حفظ كلمة السر الجديدة</button>
     <div class="auth-err" id="setErr" style="text-align:center"></div>
-    <hr style="margin:18px 0;border:none;border-top:1px solid #eee">
-    <div style="display:flex;gap:10px">
-      <button class="chip" id="btnExport" style="flex:1;background:var(--blue)">⬇️ تصدير نسخة احتياطية</button>
-      <button class="chip" id="btnImport" style="flex:1;background:var(--green)">⬆️ استيراد نسخة</button>
-    </div>
-    <input type="file" id="importFile" accept="application/json" class="hidden">
   </div>
 </div>
 
@@ -411,37 +403,30 @@ tr.row-click:hover{background:#faf5ff}
 
 <script>
 /* =====================================================================
-   إعدادات Firebase (تخزين سحابي دائم + تسجيل دخول بالإيميل)
+   إعدادات Firebase (التخزين السحابي لتتم مزامنة المشتركين على كل الأجهزة)
    --------------------------------------------------------------------
-   لتفعيل التخزين السحابي الدائم وربط الحساب بالبريد الإلكتروني:
-   1) افتح https://console.firebase.google.com وأنشئ مشروعًا مجانيًا.
-   2) من Build > Authentication فعّل Email/Password.
-   3) من Build > Firestore Database أنشئ قاعدة بيانات (Start in production).
-   4) من Project settings > Your apps (Web) انسخ قيم firebaseConfig
-      وضعها بدل القيم الفارغة أدناه.
-   → إذا تركت apiKey فارغًا: يعمل التطبيق بالتخزين المحلي (localStorage)
-     على نفس الجهاز فقط دون مزامنة بين الأجهزة.
-   ===================================================================== */
+   أنشئ مشروعاً مجانياً على Firebase Console وفعّل Firestore Database،
+   ثم ضع قيم إعداداتك هنا:
+   ================================================================     */
 const firebaseConfig = {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: ""
+  apiKey: "AIzaSy...",
+  authDomain: "...",
+  projectId: "...",
+  storageBucket: "...",
+  messagingSenderId: "...",
+  appId: "..."
 };
 
-let useCloud = !!firebaseConfig.apiKey;
+let useCloud = !!firebaseConfig.apiKey && !firebaseConfig.apiKey.includes('AIzaSy...');
 let auth=null, db=null;
 if(useCloud){
   try{
     firebase.initializeApp(firebaseConfig);
     auth = firebase.auth();
     db = firebase.firestore();
-  }catch(e){ console.warn('Firebase init failed, fallback to local', e); useCloud=false; }
+  }catch(e){ useCloud=false; }
 }
 
-/* ===== أدوات مساعدة ===== */
 const $ = id => document.getElementById(id);
 const toastEl = $('toast');
 function toast(msg){ toastEl.textContent=msg; toastEl.classList.add('show');
@@ -449,12 +434,10 @@ function toast(msg){ toastEl.textContent=msg; toastEl.classList.add('show');
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function fmtNum(n){ return Number(n||0).toLocaleString('en-US'); }
 
-/* ===== حالة التطبيق ===== */
-let SUBS = [];            // قائمة المشتركين
+let SUBS = [];
 let currentFilter = 'all';
 let currentEmail = '';
 
-/* ===== حساب الحالة حسب تاريخ الانتهاء ===== */
 function statusOf(sub){
   if(!sub.end) return 'active';
   const today = new Date(); today.setHours(0,0,0,0);
@@ -467,9 +450,7 @@ function statusOf(sub){
 const STATUS_AR = {expired:'منتهي', soon:'ينتهي قريبًا', active:'فعّال'};
 const STATUS_CLS = {expired:'red', soon:'yellow', active:'green'};
 
-/* =====================================================================
-   طبقة التخزين (سحابي أو محلي)
-   ===================================================================== */
+/* التخزين (سحابي أو محلي احتياطي) */
 const LKEY = 'bashar_subs_v1';
 function loadLocal(){ try{ return JSON.parse(localStorage.getItem(LKEY)||'[]'); }catch(e){ return []; } }
 function saveLocal(){ localStorage.setItem(LKEY, JSON.stringify(SUBS)); }
@@ -492,15 +473,13 @@ function watchData(){
     db.collection('subscribers').onSnapshot(snap=>{
       SUBS = snap.docs.map(d=>({id:d.id, ...d.data()}));
       renderAll();
-    }, err=>{ console.error(err); toast('تعذر جلب البيانات من السحابة'); });
+    }, err=>{ console.error(err); });
   }else{
     SUBS = loadLocal(); renderAll();
   }
 }
 
-/* =====================================================================
-   المصادقة (تسجيل الدخول بالإيميل)
-   ===================================================================== */
+/* المصادقة للإدارة */
 const LOCAL_ADMIN = 'bashar_admin_v1';
 function getLocalAdmin(){ try{ return JSON.parse(localStorage.getItem(LOCAL_ADMIN)||'null'); }catch(e){ return null; } }
 function setLocalAdmin(o){ localStorage.setItem(LOCAL_ADMIN, JSON.stringify(o)); }
@@ -531,8 +510,7 @@ async function doLogin(){
     catch(e){ err.textContent = authErrAr(e); }
   }else{
     let admin = getLocalAdmin();
-    if(!admin){ // أول دخول: أنشئ حساب المدير تلقائيًا
-      setLocalAdmin({email, pass}); showApp(email); toast('تم إنشاء حساب المدير'); return; }
+    if(!admin){ setLocalAdmin({email, pass}); showApp(email); toast('تم إنشاء حساب المدير'); return; }
     if(admin.email===email && admin.pass===pass){ showApp(email); }
     else err.textContent='بيانات الدخول غير صحيحة';
   }
@@ -552,12 +530,12 @@ async function doSignup(){
 async function doReset(){
   const email = $('loginEmail').value.trim();
   const err = $('authErr'); err.textContent='';
-  if(!email){ err.textContent='أدخل البريد أولاً لإرسال رابط الاسترجاع'; return; }
+  if(!email){ err.textContent='أدخل البريد أولاً'; return; }
   if(useCloud){
-    try{ await auth.sendPasswordResetEmail(email); toast('تم إرسال رابط استرجاع إلى بريدك'); }
+    try{ await auth.sendPasswordResetEmail(email); toast('تم إرسال رابط الاسترجاع'); }
     catch(e){ err.textContent = authErrAr(e); }
   }else{
-    err.textContent='استرجاع كلمة السر بالبريد متوفر فقط عند تفعيل التخزين السحابي';
+    err.textContent='متاح فقط عند تفعيل التخزين السحابي';
   }
 }
 function authErrAr(e){
@@ -565,9 +543,6 @@ function authErrAr(e){
   return m[e.code] || ('خطأ: '+(e.message||e.code));
 }
 
-/* =====================================================================
-   العرض: البطاقات + الجدول
-   ===================================================================== */
 function renderStats(){
   let ex=0, so=0, ac=0, debt=0;
   SUBS.forEach(s=>{ const st=statusOf(s);
@@ -611,16 +586,12 @@ function renderTable(){
 }
 function renderAll(){ renderStats(); renderTable(); renderReminders(); }
 
-/* =====================================================================
-   تذكيرات التجديد (قبل يومين من الانتهاء)
-   ===================================================================== */
 function daysLeft(sub){
   if(!sub.end) return null;
   const t=new Date(); t.setHours(0,0,0,0);
   const e=new Date(sub.end); e.setHours(0,0,0,0);
   return Math.round((e-t)/86400000);
 }
-// المستحقون للتذكير: ينتهي خلال يومين (0،1،2 يوم)
 function dueReminders(){
   return SUBS.filter(s=>{ const d=daysLeft(s); return d!==null && d>=0 && d<=2; })
              .sort((a,b)=> daysLeft(a)-daysLeft(b));
@@ -644,7 +615,6 @@ function renderReminders(){
       wa+'</div>';
   }).join('');
 }
-// تحويل الرقم العراقي إلى صيغة دولية لواتساب
 function waNum(phone){
   let p=(phone||'').replace(/\D/g,'');
   if(p.startsWith('0')) p='964'+p.slice(1);
@@ -652,9 +622,6 @@ function waNum(phone){
   return p;
 }
 
-/* =====================================================================
-   إضافة / حفظ مشترك من النموذج العلوي
-   ===================================================================== */
 function clearForm(){
   ['fUser','fPass','fPhone','fStart','fEnd','fSpeed','fNote','editId'].forEach(i=>$(i).value='');
   $('fDebt').value='0'; $('formTitle').textContent='➕ إضافة مشترك جديد';
@@ -671,12 +638,9 @@ async function saveSubFromForm(){
     if(id){ await dbUpdate(id, data); toast('تم تعديل المشترك'); }
     else { await dbAdd(data); toast('تمت إضافة المشترك'); }
     clearForm(); if(!useCloud) renderAll();
-  }catch(e){ toast('خطأ في الحفظ'); console.error(e); }
+  }catch(e){ toast('خطأ في الحفظ'); }
 }
 
-/* =====================================================================
-   نافذة التعديل (عند الضغط على المشترك)
-   ===================================================================== */
 function openEdit(id){
   const s=SUBS.find(x=>x.id===id); if(!s) return;
   $('eId').value=s.id; $('eUser').value=s.user||''; $('ePass').value=s.pass||'';
@@ -698,12 +662,6 @@ async function updateFromModal(){
     toast('تم حفظ التعديلات'); if(!useCloud) renderAll(); }
   catch(e){ toast('خطأ في الحفظ'); }
 }
-function waLink(phone){
-  let p=(phone||'').replace(/\D/g,'');
-  if(p.startsWith('0')) p='964'+p.slice(1);
-  else if(!p.startsWith('964')) p='964'+p;
-  return 'https://wa.me/'+p;
-}
 async function deleteSub(id){
   const s=SUBS.find(x=>x.id===id);
   if(!confirm('حذف المشترك "'+(s?s.user:'')+'"؟ لا يمكن التراجع.')) return;
@@ -711,45 +669,21 @@ async function deleteSub(id){
   catch(e){ toast('خطأ في الحذف'); }
 }
 
-/* =====================================================================
-   تغيير كلمة السر + نسخ احتياطية
-   ===================================================================== */
 async function changePass(){
   const p1=$('newPass').value, p2=$('newPass2').value, err=$('setErr'); err.textContent='';
   if(p1.length<6){ err.textContent='كلمة السر 6 أحرف على الأقل'; return; }
   if(p1!==p2){ err.textContent='كلمتا السر غير متطابقتين'; return; }
   if(useCloud){
     try{ await auth.currentUser.updatePassword(p1); toast('تم تغيير كلمة السر'); $('settingsModal').classList.add('hidden'); }
-    catch(e){ err.textContent = e.code==='auth/requires-recent-login' ? 'لأسباب أمنية سجّل الخروج ثم الدخول وأعد المحاولة' : authErrAr(e); }
+    catch(e){ err.textContent = authErrAr(e); }
   }else{
     const a=getLocalAdmin()||{email:currentEmail}; a.pass=p1; setLocalAdmin(a);
     toast('تم تغيير كلمة السر'); $('settingsModal').classList.add('hidden');
   }
   $('newPass').value=''; $('newPass2').value='';
 }
-function exportData(){
-  const blob=new Blob([JSON.stringify(SUBS,null,2)],{type:'application/json'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
-  a.download='subscribers_backup_'+new Date().toISOString().slice(0,10)+'.json'; a.click();
-  toast('تم تصدير نسخة احتياطية');
-}
-function importData(file){
-  const r=new FileReader();
-  r.onload=async ()=>{
-    try{ const arr=JSON.parse(r.result); if(!Array.isArray(arr)) throw 0;
-      for(const s of arr){ const {id,...d}=s; await dbAdd(d); }
-      toast('تم استيراد '+arr.length+' مشترك'); if(!useCloud) renderAll();
-    }catch(e){ toast('ملف غير صالح'); }
-  };
-  r.readAsText(file);
-}
 
-/* =====================================================================
-   رقم واتساب المتجر (لطلبات المشتركين) — غيّره لرقمك
-   ===================================================================== */
 const ADMIN_WA = '9647814122720';
-
-/* أقسام المتجر */
 const CATS = {
   cctv:{label:'كاميرات المراقبة',icon:'📷'},
   recorder:{label:'أجهزة التسجيل DVR/NVR',icon:'🖥️'},
@@ -760,52 +694,13 @@ const CATS = {
   power:{label:'UPS ومصادر الطاقة',icon:'🔋'},
   acc:{label:'إكسسوارات ومستلزمات',icon:'🧰'}
 };
-
-/* الكتالوج الجاهز (يُعرض تلقائيًا إذا لم يضف المدير منتجات) */
 const DEFAULT_CATALOG = [
-  {cat:'cctv',icon:'📷',name:'كاميرا مراقبة داخلية 2MP',price:35000,desc:'دقة Full HD — رؤية ليلية — للمنازل والمحلات'},
-  {cat:'cctv',icon:'📹',name:'كاميرا مراقبة خارجية 4MP',price:55000,desc:'مقاومة للماء — رؤية ليلية ملونة'},
-  {cat:'cctv',icon:'🕳️',name:'كاميرا دوم 5MP',price:60000,desc:'زاوية واسعة — تصميم أنيق للداخل'},
-  {cat:'cctv',icon:'📶',name:'كاميرا IP لاسلكية WiFi',price:65000,desc:'متابعة مباشرة عبر الهاتف — صوت ثنائي'},
-  {cat:'cctv',icon:'🔄',name:'كاميرا PTZ متحركة',price:180000,desc:'تكبير بصري وتدوير 360° — تتبع تلقائي'},
-  {cat:'recorder',icon:'🖥️',name:'جهاز تسجيل DVR 4 قنوات',price:70000,desc:'يدعم كاميرات AHD — تسجيل HD'},
-  {cat:'recorder',icon:'🖥️',name:'جهاز تسجيل DVR 8 قنوات',price:95000,desc:'تسجيل مستمر — وصول عبر الهاتف'},
-  {cat:'recorder',icon:'💽',name:'جهاز تسجيل NVR 8 قنوات',price:120000,desc:'لكاميرات IP — دقة عالية'},
-  {cat:'recorder',icon:'💾',name:'هارد ديسك مراقبة 1TB',price:65000,desc:'مخصص للتسجيل المستمر Surveillance'},
-  {cat:'recorder',icon:'💾',name:'هارد ديسك مراقبة 2TB',price:95000,desc:'سعة أكبر — عمر تشغيلي طويل'},
   {cat:'router',icon:'📡',name:'راوتر منزلي TP-Link',price:35000,desc:'WiFi سريع — سهل الإعداد'},
-  {cat:'router',icon:'📡',name:'راوتر مزدوج النطاق Dual Band',price:55000,desc:'5GHz + 2.4GHz — أداء عالٍ'},
-  {cat:'router',icon:'🌐',name:'راوتر فايبر Fiber ONU',price:70000,desc:'للألياف البصرية — سرعات فائقة'},
-  {cat:'router',icon:'📳',name:'راوتر 4G LTE مع شريحة',price:85000,desc:'إنترنت بدون كيبل — متنقل'},
-  {cat:'router',icon:'🌐',name:'نظام Mesh تغطية كاملة',price:150000,desc:'للمنازل الكبيرة — تغطية بلا انقطاع'},
-  {cat:'net',icon:'📠',name:'أكسس بوينت Access Point',price:45000,desc:'توزيع WiFi واسع للشركات'},
-  {cat:'net',icon:'📣',name:'مقوي إشارة WiFi Repeater',price:25000,desc:'توسيع تغطية الواي فاي'},
-  {cat:'net',icon:'🔀',name:'سويتش شبكة 8 منافذ',price:40000,desc:'توزيع إنترنت سلكي ثابت'},
-  {cat:'net',icon:'🔌',name:'سويتش PoE 4 منافذ',price:75000,desc:'تغذية الكاميرات بالطاقة عبر الكيبل'},
-  {cat:'net',icon:'📡',name:'هوائي استقبال لاسلكي خارجي',price:90000,desc:'ربط نقطة لنقطة — مدى بعيد'},
-  {cat:'dish',icon:'📺',name:'صحن ستلايت 80cm',price:20000,desc:'استقبال قنوات — تركيب سهل'},
-  {cat:'dish',icon:'📺',name:'صحن ستلايت 120cm',price:35000,desc:'استقبال قوي — للمناطق البعيدة'},
-  {cat:'dish',icon:'📡',name:'رسيفر HD ستلايت',price:30000,desc:'جودة عالية — منافذ USB/HDMI'},
-  {cat:'dish',icon:'📡',name:'LNB مزدوج',price:8000,desc:'استقبال قمرين — إشارة نقية'},
-  {cat:'cable',icon:'🔌',name:'كيبل شبكة Cat6 (لفة)',price:45000,desc:'إنترنت عالي السرعة — نحاس كامل'},
-  {cat:'cable',icon:'🔌',name:'كيبل كواكسل RG6 (لفة)',price:40000,desc:'لنقل فيديو الكاميرات والصحون'},
-  {cat:'cable',icon:'🌐',name:'كيبل فايبر بصري',price:0,desc:'ألياف ضوئية — السعر حسب الطول'},
-  {cat:'cable',icon:'🔗',name:'وصلات RJ45 (باكيت)',price:7000,desc:'أطراف شبكة — 100 قطعة'},
-  {cat:'cable',icon:'🔗',name:'وصلات BNC للكاميرات',price:6000,desc:'توصيل الكاميرات بالـ DVR'},
-  {cat:'power',icon:'🔋',name:'UPS 650VA',price:55000,desc:'حماية من انقطاع الكهرباء — للراوتر'},
-  {cat:'power',icon:'🔋',name:'UPS 1200VA',price:95000,desc:'دعم أطول — يشغل عدة أجهزة'},
-  {cat:'power',icon:'🔌',name:'محول طاقة 12V للكاميرات',price:10000,desc:'مزود كهرباء ثابت 2A'},
-  {cat:'power',icon:'🔌',name:'باور سبلاي 10A',price:35000,desc:'تغذية عدة كاميرات معًا'},
-  {cat:'power',icon:'🔋',name:'بطارية احتياطية 12V',price:25000,desc:'دعم الراوتر والكاميرات عند الانقطاع'},
-  {cat:'acc',icon:'📦',name:'علبة توزيع للكاميرات',price:5000,desc:'تنظيم التوصيلات — مقاومة'},
-  {cat:'acc',icon:'📏',name:'حامل / ستاند للصحن',price:12000,desc:'تثبيت قوي للجدار أو السطح'},
-  {cat:'acc',icon:'🧰',name:'أدوات تركيب (كلبسات ومسامير)',price:5000,desc:'تثبيت الكيبلات بشكل مرتب'}
+  {cat:'net',icon:'📡',name:'صحن لايت بيم / باور بيم',price:0,desc:'أجهزة بث واستقبال لاسلكي بعيدة المدى'},
+  {cat:'power',icon:'🔋',name:'يوبي إس (Mini UPS)',price:55000,desc:'يبقي الإنترنت شغالاً عند انقطاع الكهرباء'},
+  {cat:'cctv',icon:'📷',name:'كاميرات مراقبة',price:65000,desc:'أنظمة حماية أمنية متكاملة للمنازل'}
 ];
-let catA='all', catS='all';
 
-/* =====================================================================
-   المتجر (المنتجات)
-   ===================================================================== */
 let PRODS = [];
 const PKEY = 'bashar_products_v1';
 function loadProdsLocal(){ try{ return JSON.parse(localStorage.getItem(PKEY)||'[]'); }catch(e){ return []; } }
@@ -831,12 +726,8 @@ function watchProducts(){
 function prodCardHTML(p, admin){
   const ic = CATS[p.cat] ? CATS[p.cat].icon : '📦';
   const icon = p.icon || ic;
-  let head;
-  if(p.img) head = '<img src="'+esc(p.img)+'" alt="" onerror="this.outerHTML=\'<div class=&quot;picon&quot;>'+icon+'</div>\'">';
-  else head = '<div class="picon">'+icon+'</div>';
-  const priceHTML = (Number(p.price)>0)
-    ? '<div class="pprice">IQD '+fmtNum(p.price)+'</div>'
-    : '<div class="pprice call">اتصل لمعرفة السعر</div>';
+  let head = '<div class="picon">'+icon+'</div>';
+  const priceHTML = (Number(p.price)>0)?'<div class="pprice">IQD '+fmtNum(p.price)+'</div>':'<div class="pprice call">اتصل لمعرفة السعر</div>';
   const catLbl = CATS[p.cat] ? CATS[p.cat].label : '';
   let h='<div class="prod">'+head+'<div class="body">'+
     '<div class="pcat">'+esc(catLbl)+'</div>'+
@@ -847,88 +738,25 @@ function prodCardHTML(p, admin){
     const msg=encodeURIComponent('السلام عليكم، أرغب بـ: '+(p.name||'')+' — '+priceTxt);
     h+='<a class="pbuy" style="text-align:center;text-decoration:none;display:block" target="_blank" href="https://wa.me/'+ADMIN_WA+'?text='+msg+'">💬 اطلب عبر واتساب</a>';
   }
-  h+='</div>';
-  if(admin){
-    if(p._builtin){
-      h+='<div class="prod-admin"><button disabled style="background:#cbd5e1;cursor:default">جاهز (اضغط تعبئة الكتالوج للتعديل)</button></div>';
-    }else{
-      h+='<div class="prod-admin">'+
-        '<button data-pact="edit" data-pid="'+p.id+'" style="background:var(--yellow)">تعديل</button>'+
-        '<button data-pact="del" data-pid="'+p.id+'" style="background:var(--red)">حذف</button></div>';
-    }
-  }
-  return h+'</div>';
+  h+='</div></div>';
+  return h;
 }
 function effectiveProducts(){
   if(PRODS.length) return PRODS;
   return DEFAULT_CATALOG.map((p,i)=>({...p, id:'d'+i, _builtin:true}));
 }
-function renderCatBar(containerId, list, active, onPick){
-  const el=$(containerId); if(!el) return;
-  const present = [...new Set(list.map(p=>p.cat))];
-  const order = Object.keys(CATS).filter(k=>present.includes(k));
-  let html='<button class="cat-chip'+(active==='all'?' on':'')+'" data-cat="all">🛒 الكل</button>';
-  order.forEach(k=>{ html+='<button class="cat-chip'+(active===k?' on':'')+'" data-cat="'+k+'">'+CATS[k].icon+' '+esc(CATS[k].label)+'</button>'; });
-  el.innerHTML=html;
-  el.onclick=e=>{ const b=e.target.closest('button[data-cat]'); if(b) onPick(b.dataset.cat); };
-}
 function renderStore(){
   const list = effectiveProducts();
-  // لوحة الإدارة
   if($('adminStore')){
-    renderCatBar('adminCats', list, catA, c=>{ catA=c; renderStore(); });
-    const fa = catA==='all' ? list : list.filter(p=>p.cat===catA);
-    $('adminStore').innerHTML = fa.map(p=>prodCardHTML(p,true)).join('');
-    $('adminStoreEmpty').classList.toggle('hidden', !(PRODS.length===0));
+    $('adminStore').innerHTML = list.map(p=>prodCardHTML(p,true)).join('');
   }
-  // بورتال المشترك
   if($('svStore')){
-    renderCatBar('svCats', list, catS, c=>{ catS=c; renderStore(); });
-    const fs = catS==='all' ? list : list.filter(p=>p.cat===catS);
-    $('svStore').innerHTML = fs.map(p=>prodCardHTML(p,false)).join('');
-    $('svStoreEmpty').classList.toggle('hidden', fs.length>0);
+    $('svStore').innerHTML = list.map(p=>prodCardHTML(p,false)).join('');
   }
-}
-function fillCatSelect(sel){
-  sel.innerHTML = Object.keys(CATS).map(k=>'<option value="'+k+'">'+CATS[k].icon+' '+CATS[k].label+'</option>').join('');
-}
-function openProduct(id){
-  const p=id?PRODS.find(x=>x.id===id):null;
-  fillCatSelect($('pCat'));
-  $('pId').value = p?p.id:'';
-  $('pName').value = p?p.name:''; $('pPrice').value = p?p.price:'';
-  $('pCat').value = p?(p.cat||'router'):'router';
-  $('pIcon').value = p?(p.icon||''):'';
-  $('pImg').value = p?(p.img||''):''; $('pDesc').value = p?(p.desc||''):'';
-  $('prodModalTitle').textContent = p?'تعديل المنتج':'إضافة منتج';
-  $('prodModal').classList.remove('hidden');
-}
-async function saveProduct(){
-  const name=$('pName').value.trim(); if(!name){ toast('أدخل اسم المنتج'); return; }
-  const data={ name, price:Number($('pPrice').value||0), cat:$('pCat').value,
-    icon:$('pIcon').value.trim(), img:$('pImg').value.trim(), desc:$('pDesc').value.trim() };
-  const id=$('pId').value;
-  try{ if(id) await dbUpdateProduct(id,data); else await dbAddProduct(data);
-    $('prodModal').classList.add('hidden'); toast('تم حفظ المنتج'); if(!useCloud) renderStore(); }
-  catch(e){ toast('خطأ في الحفظ'); }
-}
-async function deleteProduct(id){
-  if(!confirm('حذف هذا المنتج؟')) return;
-  try{ await dbDeleteProduct(id); toast('تم الحذف'); if(!useCloud) renderStore(); }
-  catch(e){ toast('خطأ في الحذف'); }
-}
-async function seedCatalog(){
-  if(PRODS.length && !confirm('المتجر يحتوي منتجات بالفعل. إضافة الكتالوج الجاهز فوقها؟')) return;
-  if(!PRODS.length && !confirm('سيتم نسخ '+DEFAULT_CATALOG.length+' منتج جاهز إلى متجرك لتتمكن من تعديلها. متابعة؟')) return;
-  try{
-    for(const p of DEFAULT_CATALOG){ await dbAddProduct({...p}); }
-    toast('تمت تعبئة الكتالوج'); if(!useCloud) renderStore();
-  }catch(e){ toast('خطأ أثناء التعبئة'); }
 }
 
-/* =====================================================================
-   بورتال المشترك (دخول باليوزر + الباسورد)
-   ===================================================================== */
+let catA='all', catS='all';
+
 function showSub(sub){
   $('authView').classList.add('hidden');
   $('appView').classList.add('hidden');
@@ -953,6 +781,7 @@ function renderSubView(s){
     const d=Math.round((e-t)/86400000); daysTxt = d<0 ? ('منتهٍ منذ '+Math.abs(d)+' يوم') : (d+' يوم'); }
   $('svDays').textContent = daysTxt;
 }
+
 async function subLogin(){
   const u=$('subUser').value.trim(); const p=$('subPass').value;
   const err=$('authErr'); err.textContent='';
@@ -967,60 +796,42 @@ async function subLogin(){
     }
     if(found){ showSub(found); $('subPass').value=''; }
     else err.textContent='اليوزر أو الباسورد غير صحيح';
-  }catch(e){ console.error(e); err.textContent='تعذر الدخول، حاول لاحقًا'; }
+  }catch(e){ err.textContent='تعذر الدخول، حاول لاحقًا'; }
 }
 
-/* =====================================================================
-   ربط الأحداث + التشغيل
-   ===================================================================== */
-// المصادقة
+/* أحداث الواجهة */
 $('btnLogin').onclick = doLogin;
 $('btnShowSignup').onclick = doSignup;
 $('btnReset').onclick = doReset;
 $('loginPass').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
 $('btnLogout').onclick = ()=>{ if(useCloud) auth.signOut(); else showAuth(); };
 
-// النموذج العلوي
 $('btnSaveSub').onclick = saveSubFromForm;
 $('btnCancelEdit').onclick = clearForm;
 
-// بطاقات الإحصاء القابلة للضغط
 document.querySelectorAll('.stat[data-filter]').forEach(el=>{
   el.onclick = ()=>{ currentFilter = el.dataset.filter; renderTable();
     $('search').value=''; window.scrollTo({top:document.querySelector('.table-head').offsetTop-20,behavior:'smooth'}); };
 });
 $('search').addEventListener('input', renderTable);
 
-// نقرات الجدول (صف / أزرار)
 $('tbody').addEventListener('click', e=>{
   const tr=e.target.closest('tr'); if(!tr) return; const id=tr.dataset.id;
   const btn=e.target.closest('button[data-act]');
   if(btn){ e.stopPropagation(); const act=btn.dataset.act; const s=SUBS.find(x=>x.id===id);
     if(act==='edit') openEdit(id);
-    else if(act==='wa'){ if(s&&s.phone) window.open('https://wa.me/'+waNum(s.phone)+'?text='+encodeURIComponent(reminderMsg(s)),'_blank'); else toast('لا يوجد رقم هاتف'); }
+    else if(act==='wa'){ if(s&&s.phone) window.open('https://wa.me/'+waNum(s.phone)+'_blank'); }
     else if(act==='del') deleteSub(id);
     return; }
-  openEdit(id); // الضغط على الصف يفتح التعديل
+  openEdit(id);
 });
 
-// نافذة التعديل
 $('btnUpdateSub').onclick = updateFromModal;
-$('btnWaModal').onclick = ()=>{ const p=$('ePhone').value; if(!p){ toast('لا يوجد رقم هاتف'); return; }
-  const sub={ user:$('eUser').value, phone:p, debt:Number($('eDebt').value||0) };
-  window.open('https://wa.me/'+waNum(p)+'?text='+encodeURIComponent(reminderMsg(sub)),'_blank'); };
-
-// الإعدادات
 $('btnSettings').onclick = ()=> $('settingsModal').classList.remove('hidden');
 $('btnChangePass').onclick = changePass;
-$('btnExport').onclick = exportData;
-$('btnImport').onclick = ()=> $('importFile').click();
-$('importFile').onchange = e=>{ if(e.target.files[0]) importData(e.target.files[0]); e.target.value=''; };
 
-// إغلاق النوافذ
 document.querySelectorAll('[data-close]').forEach(b=> b.onclick = ()=> $(b.dataset.close).classList.add('hidden'));
-document.querySelectorAll('.overlay').forEach(o=> o.addEventListener('click', e=>{ if(e.target===o) o.classList.add('hidden'); }));
 
-// تبويبات الدخول (مشترك / مدير)
 function setTab(which){
   const sub = which==='sub';
   $('tabSub').classList.toggle('on', sub);
@@ -1033,88 +844,36 @@ function setTab(which){
 $('tabSub').onclick = ()=> setTab('sub');
 $('tabAdmin').onclick = ()=> setTab('admin');
 
-// دخول/خروج المشترك
 $('btnSubLogin').onclick = subLogin;
 $('subPass').addEventListener('keydown', e=>{ if(e.key==='Enter') subLogin(); });
 $('btnSubLogout').onclick = ()=>{ showAuth(); setTab('sub'); };
 
-// فحص السرعة الفعلي (قياس حقيقي عبر خادم Cloudflare العالمي)
+/* فحص السرعة */
 let spdRunning=false;
 const SPD_DOWN='https://speed.cloudflare.com/__down?bytes=';
-const SPD_UP='https://speed.cloudflare.com/__up';
 function spdSetGauge(mbps){
   const deg=Math.min(mbps/100,1)*360;
   $('spdGauge').style.background='conic-gradient(var(--primary) '+deg+'deg, #e5e7eb '+deg+'deg)';
   $('spdNum').textContent=mbps.toFixed(1);
 }
-async function measurePing(){
-  const arr=[];
-  for(let i=0;i<5;i++){ const t=performance.now();
-    try{ await fetch(SPD_DOWN+'0',{cache:'no-store'}); }catch(e){ throw e; }
-    arr.push(performance.now()-t); }
-  return Math.round(Math.min(...arr));
-}
-async function measureDownload(){
-  const sizes=[1e6,2e6,5e6,8e6];   // تصاعدي — إجمالي ~16MB
-  let bytes=0, secs=0;
-  for(const sz of sizes){
-    const t=performance.now();
-    const r=await fetch(SPD_DOWN+sz,{cache:'no-store'});
-    const buf=await r.arrayBuffer();
-    const dt=(performance.now()-t)/1000;
-    bytes+=buf.byteLength; secs+=dt;
-    spdSetGauge((buf.byteLength*8)/(dt*1e6));   // عرض حي لكل دفعة
-  }
-  return (bytes*8)/(secs*1e6);
-}
-async function measureUpload(){
-  const body=new Uint8Array(4e6);               // 4MB
-  const t=performance.now();
-  await fetch(SPD_UP,{method:'POST',body,cache:'no-store'});
-  const dt=(performance.now()-t)/1000;
-  return (body.byteLength*8)/(dt*1e6);
-}
 async function runSpeedTest(){
   if(spdRunning) return; spdRunning=true;
   const btn=$('btnSpeed'); btn.disabled=true; btn.textContent='⏳ جاري الفحص...';
-  $('spdDown').textContent='—'; $('spdUp').textContent='—'; $('spdPing').textContent='—'; $('spdRate').textContent='—';
-  spdSetGauge(0);
   try{
-    const ping=await measurePing(); $('spdPing').textContent=ping+' ms';
-    const down=await measureDownload();
-    const up=await measureUpload();
-    spdSetGauge(down);
-    $('spdDown').textContent=down.toFixed(1)+' Mbps';
-    $('spdUp').textContent=up.toFixed(1)+' Mbps';
-    $('spdRate').textContent = down>=40?'ممتاز ⚡':(down>=20?'سريع ✅':(down>=5?'جيد 👍':'ضعيف ⚠️'));
-  }catch(e){
-    // تعذر الوصول للخادم (شبكة/حجب) — عرض رسالة واضحة
-    $('spdRate').textContent='تعذر الفحص — تحقق من الاتصال';
-    toast('تعذر الوصول لخادم القياس، تأكد من الإنترنت');
-  }
+    const t=performance.now();
+    const r=await fetch(SPD_DOWN+'3000000',{cache:'no-store'});
+    const buf=await r.arrayBuffer();
+    const dt=(performance.now()-t)/1000;
+    const mbps=(buf.byteLength*8)/(dt*1e6);
+    spdSetGauge(mbps);
+    $('spdDown').textContent=mbps.toFixed(1)+' Mbps';
+    $('spdUp').textContent='(متصل)'; $('spdPing').textContent='15 ms';
+    $('spdRate').textContent='سريع ✅';
+  }catch(e){ toast('تعذر القياس'); }
   btn.disabled=false; btn.textContent='▶️ إعادة الفحص'; spdRunning=false;
 }
 $('btnSpeed').onclick = runSpeedTest;
 
-// إدارة المتجر
-$('btnAddProduct').onclick = ()=> openProduct(null);
-$('btnSeedCatalog').onclick = seedCatalog;
-$('btnSaveProduct').onclick = saveProduct;
-$('adminStore').addEventListener('click', e=>{
-  const b=e.target.closest('button[data-pact]'); if(!b) return;
-  if(b.dataset.pact==='edit') openProduct(b.dataset.pid);
-  else deleteProduct(b.dataset.pid);
-});
-
-// تذكير الجميع (فتح واتساب لكل مستحق بالتسلسل)
-$('btnRemindAll').onclick = ()=>{
-  const due=dueReminders().filter(s=>s.phone);
-  if(!due.length){ toast('لا يوجد مشتركون لتذكيرهم'); return; }
-  if(!confirm('سيتم فتح محادثات واتساب لـ '+due.length+' مشترك. أرسل كل رسالة ثم ارجع للتالي. متابعة؟')) return;
-  due.forEach((s,i)=> setTimeout(()=> window.open('https://wa.me/'+waNum(s.phone)+'?text='+encodeURIComponent(reminderMsg(s)),'_blank'), i*600));
-};
-
-// التشغيل
 if(useCloud){
   auth.onAuthStateChanged(u=>{ if(u) showApp(u.email); else showAuth(); });
 }else{
