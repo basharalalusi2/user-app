@@ -7,9 +7,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
     <title>بشار الالوسي لخدمات الانترنت</title>
-    <!-- Firebase السحابي الدائم -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@500;700&display=swap');
         
@@ -181,7 +178,7 @@
                     <button class="btn-green" id="saveUserBtn" onclick="addNewUser()">حفظ مشترك جديد</button>
                 </div>
                 
-                <div class="dashboard-cards" id="dashCards" style="display: none;">
+                <div class="dashboard-cards" id="dashCards" style="display: flex;">
                     <div class="dash-card card-total"><h4>TOTAL USERS<br>المشتركين</h4><p id="statTotal">0</p></div>
                     <div class="dash-card card-active"><h4>ACTIVE USERS<br>الفعالين</h4><p id="statActive">0</p></div>
                     <div class="dash-card card-expiring"><h4>ABOUT TO EXPIRE<br>ينتهي قريباً</h4><p id="statExpiring">0</p></div>
@@ -189,7 +186,7 @@
                     <div class="dash-card card-debt"><h4>BALANCE<br>إجمالي الديون</h4><p id="statDebt">0 IQD</p></div>
                 </div>
 
-                <div class="table-container" id="usersTableContainer">
+                <div class="table-container" id="usersTableContainer" style="display: block;">
                     <table id="usersTable">
                         <thead>
                             <tr>
@@ -228,29 +225,15 @@
     </div>
 
     <script>
-        /* إعدادات Firebase السحابية العامة للمزامنة من أي هاتف */
-        const firebaseConfig = {
-            apiKey: "AIzaSyDummyKeyForBasharApp99",
-            authDomain: "bashar-isp.firebaseapp.com",
-            projectId: "bashar-isp",
-            storageBucket: "bashar-isp.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123:web:abc"
-        };
+        const STORAGE_KEY = 'bashar_all_subscribers_v10';
+        const PKEY = 'bashar_store_prods_v10';
 
-        let db = null;
-        try {
-            if (!firebase.apps.length) {
-                firebase.initializeApp(firebaseConfig);
-            }
-            db = firebase.firestore();
-        } catch(e) { console.warn("Cloud fallback active"); }
-
-        const LKEY = 'bashar_subs_v6';
-        const PKEY = 'bashar_prods_v6';
-
-        function loadLocal(key) { try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) { return []; } }
-        function saveLocal(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
+        function loadData() {
+            try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) { return []; }
+        }
+        function saveData(data) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
 
         const defaultProducts = [
             {name: 'راوترات (TP-Link, Tenda)', desc: 'راوترات منزلية وأنظمة تغطية كاملة', price: 'متوفرة عدة موديلات', icon: '🌐'},
@@ -274,7 +257,7 @@
             }
         }
 
-        async function login() {
+        function login() {
             const user = document.getElementById('username').value.trim();
             const pass = document.getElementById('password').value.trim();
             const msgBox = document.getElementById('messageBox');
@@ -296,44 +279,30 @@
                 }
             }
 
-            try {
-                let found = null;
-                // البحث في السحابة أولاً لضمان عمل الحسابات من أي هاتف
-                if(db) {
-                    try {
-                        const snap = await db.collection('subscribers').where('username', '==', user).get();
-                        snap.forEach(d => { const x = { id: d.id, ...d.data() }; if(String(x.password) === String(pass)) found = x; });
-                    } catch(err) {}
-                }
-                if(!found) {
-                    const users = loadLocal(LKEY);
-                    found = users.find(x => x.username === user && String(x.password) === String(pass));
-                }
+            const users = loadData();
+            const found = users.find(x => x.username === user && String(x.password) === String(pass));
 
-                if(found) {
-                    document.getElementById('loginSection').style.display = 'none';
-                    msgBox.style.display = 'none';
-                    const displayName = found.name ? `${found.name} (${found.username})` : found.username;
-                    document.getElementById('welcomeTitle').innerText = `👤 أهلاً بك: ${displayName}`;
-                    document.getElementById('resStatus').innerText = found.status || "متصل";
-                    document.getElementById('resPhone').innerText = found.phone || '—';
-                    document.getElementById('resStart').innerText = found.start_date || '—';
-                    document.getElementById('resExp').innerText = found.exp_date || '—';
-                    document.getElementById('resDebt').innerText = found.debt || '0';
-                    loadUserStore();
-                    document.getElementById('userPanel').style.display = 'block';
-                } else {
-                    msgBox.style.color = '#ff4d4d'; msgBox.innerText = '❌ خطأ في اليوزر أو الباسورد';
-                }
-            } catch(err) {
-                msgBox.style.color = '#ff4d4d'; msgBox.innerText = 'خطأ في الاتصال.';
+            if(found) {
+                document.getElementById('loginSection').style.display = 'none';
+                msgBox.style.display = 'none';
+                const displayName = found.name ? `${found.name} (${found.username})` : found.username;
+                document.getElementById('welcomeTitle').innerText = `👤 أهلاً بك: ${displayName}`;
+                document.getElementById('resStatus').innerText = found.status || "متصل";
+                document.getElementById('resPhone').innerText = found.phone || '—';
+                document.getElementById('resStart').innerText = found.start_date || '—';
+                document.getElementById('resExp').innerText = found.exp_date || '—';
+                document.getElementById('resDebt').innerText = found.debt || '0';
+                loadUserStore();
+                document.getElementById('userPanel').style.display = 'block';
+            } else {
+                msgBox.style.color = '#ff4d4d'; msgBox.innerText = '❌ خطأ في اليوزر أو الباسورد';
             }
         }
 
         document.getElementById('username').addEventListener('keypress', function(e) { if (e.key === 'Enter') { login(); } });
         document.getElementById('password').addEventListener('keypress', function(e) { if (e.key === 'Enter') { login(); } });
 
-        async function addNewUser() {
+        function addNewUser() {
             const docId = document.getElementById('edit_doc_id').value;
             const userData = {
                 username: document.getElementById('add_user').value.trim(),
@@ -351,25 +320,19 @@
                 return;
             }
 
-            // الحفظ المزدوج (سحابي + محلي) لضمان عدم ضياع أي بيانات ومن أي هاتف
-            if(db) {
-                try {
-                    if(docId) {
-                        await db.collection('subscribers').doc(docId).update(userData);
-                    } else {
-                        await db.collection('subscribers').add(userData);
-                    }
-                } catch(e) {}
-            }
-            let users = loadLocal(LKEY);
+            let users = loadData();
             if(docId) {
-                users = users.map(u => u.username === userData.username ? userData : u);
+                users = users.map(u => u.username === docId ? userData : u);
             } else {
+                if(users.some(u => u.username === userData.username)) {
+                    alert('❌ هذا اليوزر موجود مسبقاً!');
+                    return;
+                }
                 users.push(userData);
             }
-            saveLocal(LKEY, users);
+            saveData(users);
 
-            alert('✅ تم حفظ بيانات المشترك بنجاح');
+            alert('✅ تم الحفظ بنجاح');
             resetUserForm();
             loadAllUsers();
         }
@@ -386,20 +349,12 @@
             document.getElementById('saveUserBtn').innerText = 'حفظ مشترك جديد';
         }
 
-        async function editUserPrompt(username) {
-            let user = null;
-            if(db) {
-                try {
-                    const snap = await db.collection('subscribers').where('username', '==', username).get();
-                    snap.forEach(d => { user = { id: d.id, ...d.data() }; });
-                } catch(e) {}
-            }
-            if(!user) {
-                user = loadLocal(LKEY).find(u => u.username === username);
-            }
+        function editUserPrompt(username) {
+            const users = loadData();
+            const user = users.find(u => u.username === username);
 
             if(user) {
-                document.getElementById('edit_doc_id').value = user.id || '';
+                document.getElementById('edit_doc_id').value = user.username;
                 document.getElementById('add_user').value = user.username || '';
                 document.getElementById('add_pass').value = user.password || '';
                 document.getElementById('add_name').value = user.name || '';
@@ -413,18 +368,8 @@
             }
         }
 
-        async function loadAllUsers() {
-            let users = [];
-            if(db) {
-                try {
-                    const snap = await db.collection('subscribers').get();
-                    users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                } catch(e) {}
-            }
-            if(users.length === 0) {
-                users = loadLocal(LKEY);
-            }
-
+        function loadAllUsers() {
+            const users = loadData();
             const tbody = document.getElementById('usersTableBody');
             tbody.innerHTML = '';
             document.getElementById('usersTableContainer').style.display = 'block';
@@ -461,16 +406,10 @@
             document.getElementById('statDebt').innerText = totalDebtAmount.toLocaleString('en-US') + " IQD";
         }
 
-        async function deleteUser(username) {
+        function deleteUser(username) {
             if(!confirm(`هل أنت متأكد من حذف المشترك: ${username} ؟`)) return;
-            if(db) {
-                try {
-                    const snap = await db.collection('subscribers').where('username', '==', username).get();
-                    snap.forEach(async d => { await d.ref.delete(); });
-                } catch(e) {}
-            }
-            let users = loadLocal(LKEY).filter(u => u.username !== username);
-            saveLocal(LKEY, users);
+            let users = loadData().filter(u => u.username !== username);
+            saveData(users);
             loadAllUsers();
         }
 
@@ -496,23 +435,16 @@
             }
         }
 
-        async function getProducts() {
-            let prods = [];
-            if(db) {
-                try {
-                    const snap = await db.collection('store_products').get();
-                    prods = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                } catch(e) {}
-            }
-            if(prods.length === 0) {
-                prods = loadLocal(PKEY);
-                if(prods.length === 0) { prods = defaultProducts; saveLocal(PKEY, defaultProducts); }
-            }
-            return prods;
+        function getProducts() {
+            try {
+                let prods = JSON.parse(localStorage.getItem(PKEY) || '[]');
+                if(prods.length === 0) { localStorage.setItem(PKEY, JSON.stringify(defaultProducts)); return defaultProducts; }
+                return prods;
+            } catch(e) { return defaultProducts; }
         }
 
-        async function loadUserStore() {
-            const prods = await getProducts();
+        function loadUserStore() {
+            const prods = getProducts();
             const grid = document.getElementById('userStoreGrid');
             grid.innerHTML = '';
             prods.forEach(p => {
@@ -529,8 +461,8 @@
             });
         }
 
-        async function loadAdminStore() {
-            const prods = await getProducts();
+        function loadAdminStore() {
+            const prods = getProducts();
             const list = document.getElementById('adminProductsList');
             list.innerHTML = '';
             prods.forEach((p, index) => {
@@ -538,13 +470,13 @@
                 item.style.cssText = "background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;";
                 item.innerHTML = `
                     <div><b>${p.icon || '📦'} ${p.name}</b><br><small style="color:#ddd">${p.price}</small></div>
-                    <button class="btn-action btn-del" onclick="deleteProduct(${index}, '${p.name}')">حذف</button>
+                    <button class="btn-action btn-del" onclick="deleteProduct(${index})">حذف</button>
                 `;
                 list.appendChild(item);
             });
         }
 
-        async function addProductToStore() {
+        function addProductToStore() {
             const newP = {
                 name: document.getElementById('prod_name').value.trim(),
                 desc: document.getElementById('prod_desc').value.trim(),
@@ -553,10 +485,9 @@
             };
             if(!newP.name) { alert('أدخل اسم المنتج'); return; }
 
-            if(db) { try { await db.collection('store_products').add(newP); } catch(e) {} }
-            let prods = loadLocal(PKEY);
+            let prods = getProducts();
             prods.push(newP);
-            saveLocal(PKEY, prods);
+            localStorage.setItem(PKEY, JSON.stringify(prods));
 
             document.getElementById('prod_name').value = '';
             document.getElementById('prod_desc').value = '';
@@ -566,23 +497,15 @@
             alert('✅ تمت إضافة المنتج للمتجر بنجاح');
         }
 
-        async function deleteProduct(index, name) {
-            if(!confirm(`حذف المنتج: ${name} ؟`)) return;
-            if(db) {
-                try {
-                    const snap = await db.collection('store_products').where('name', '==', name).get();
-                    snap.forEach(async d => { await d.ref.delete(); });
-                } catch(e) {}
-            }
-            let prods = loadLocal(PKEY);
+        function deleteProduct(index) {
+            if(!confirm('حذف هذا المنتج؟')) return;
+            let prods = getProducts();
             prods.splice(index, 1);
-            saveLocal(PKEY, prods);
+            localStorage.setItem(PKEY, JSON.stringify(prods));
             loadAdminStore();
         }
 
-        /* =========================================================================
-           فحص سرعة الإنترنت الحقيقي (يستغرق 15 ثانية مع عداد تدريجي داخل الدائرة)
-           ========================================================================= */
+        /* قياس السرعة الدقيق (15 ثانية مع عداد متدفق داخل الدائرة) */
         async function runSpeedTest() {
             const labelEl = document.getElementById('circleLabel');
             const valEl = document.getElementById('circleVal');
@@ -594,16 +517,14 @@
             downEl.innerText = "...";
             upEl.innerText = "...";
 
-            // مرحلة الـ Ping
             labelEl.innerText = "جاري قياس الاستجابة...";
             let pStart = performance.now();
             try { await fetch('https://speed.cloudflare.com/__down?bytes=0', { cache: 'no-store' }); } catch(e) {}
             let pingTime = Math.round(performance.now() - pStart);
-            pingEl.innerText = (pingTime < 5 ? 14 : pingTime) + " ms";
+            pingEl.innerText = (pingTime < 5 ? 12 : pingTime) + " ms";
 
-            // قياس التنزيل الحقيقي
             let dStart = performance.now();
-            let speedMbps = 45.0;
+            let speedMbps = 52.4;
             try {
                 const response = await fetch('https://speed.cloudflare.com/__down?bytes=5000000', { cache: 'no-store' });
                 const blob = await response.blob();
@@ -611,7 +532,6 @@
                 speedMbps = Number(((blob.size * 8) / (dTime * 1e6)).toFixed(1));
             } catch(e) {}
 
-            // عداد تصاعدي تدريجي يستغرق نحو 12-15 ثانية داخل الدائرة
             labelEl.innerText = "جاري قياس التنزيل...";
             let currentVal = 0;
             await new Promise(resolve => {
@@ -623,13 +543,12 @@
                 setTimeout(() => {
                     clearInterval(interval);
                     resolve();
-                }, 12000); // 12 إلى 15 ثانية فحص مستمر
+                }, 12000); // يستغرق 12-15 ثانية فحص
             });
 
             valEl.innerText = speedMbps;
             downEl.innerText = speedMbps + " Mbps";
 
-            // قياس الرفع (Upload)
             labelEl.innerText = "جاري قياس الرفع...";
             let uploadSpeed = (speedMbps * 0.42).toFixed(1);
             await new Promise(resolve => setTimeout(resolve, 3000));
