@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
     <title>بشار الالوسي لخدمات الانترنت</title>
-    <!-- Firebase (للمزامنة السحابية الدائمة بين الأجهزة) -->
+    <!-- Firebase للمزامنة السحابية -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -27,12 +27,12 @@
         .result-item { margin-bottom: 10px; font-size: 16px; }
         #messageBox { text-align: center; margin-top: 10px; font-weight: bold; display: none; }
         
-        /* تبديل الأدوار (مشترك / مدير) */
+        /* تبديل الأدوار */
         .role-switch { display: flex; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 4px; margin-bottom: 20px; max-width: 400px; margin-left: auto; margin-right: auto; }
         .role-btn { flex: 1; padding: 10px; border: none; border-radius: 8px; background: transparent; color: #ddd; font-size: 15px; font-weight: bold; font-family: 'Tajawal', sans-serif; cursor: pointer; transition: 0.3s; }
         .role-btn.active { background-color: #8c2ee0; color: white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
 
-        /* بطاقات إحصائيات لوحة التحكم */
+        /* بطاقات الإحصائيات */
         .dashboard-cards { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 25px; margin-bottom: 20px; justify-content: center; }
         .dash-card { flex: 1 1 150px; padding: 20px 10px; border-radius: 8px; text-align: center; color: white; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
         .dash-card h4 { margin: 0 0 10px 0; font-size: 14px; opacity: 0.9; }
@@ -43,21 +43,24 @@
         .card-expired { background-color: #e5625c; }
         .card-debt { background-color: #4e65a5; }
 
-        /* متجر المنتجات في صفحة المشترك */
+        /* متجر المنتجات */
         .store-section { margin-top: 25px; border-top: 2px solid rgba(255,255,255,0.2); padding-top: 20px; text-align: right; }
         .store-title { text-align: center; color: #00ff88; margin-bottom: 15px; font-size: 20px; }
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
         .product-card { background-color: rgba(0,0,0,0.35); border-radius: 12px; padding: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.2); display: flex; flex-direction: column; justify-content: space-between; }
-        .product-img-box { width: 100%; height: 110px; background: linear-gradient(135deg, #2c004e, #590099); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 45px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); }
-        .product-card h3 { font-size: 16px; margin: 8px 0; color: #ffd700; }
-        .product-card p { font-size: 13px; margin: 5px 0; color: #ddd; }
-        .product-price { font-weight: bold; color: #00ff88; font-size: 15px; margin: 8px 0; }
-        .btn-buy { background-color: #25d366; color: white; padding: 10px; border-radius: 6px; font-size: 14px; text-decoration: none; font-weight: bold; display: block; margin-top: 8px; }
+        .product-img-box { width: 100%; height: 90px; background: linear-gradient(135deg, #2c004e, #590099); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 38px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1); }
+        .product-card h3 { font-size: 15px; margin: 6px 0; color: #ffd700; }
+        .product-card p { font-size: 12px; margin: 4px 0; color: #ddd; }
+        .product-price { font-weight: bold; color: #00ff88; font-size: 14px; margin: 6px 0; }
+        .btn-buy { background-color: #25d366; color: white; padding: 8px; border-radius: 6px; font-size: 13px; text-decoration: none; font-weight: bold; display: block; margin-top: 6px; }
         .btn-buy:hover { background-color: #1ebe5d; }
 
-        /* أداة فحص سرعة الإنترنت */
-        .speedtest-section { margin-top: 25px; border-top: 2px solid rgba(255,255,255,0.2); padding-top: 20px; text-align: center; }
-        .speed-gauge { font-size: 32px; font-weight: bold; color: #00ff88; margin: 10px 0; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; }
+        /* أداة فحص سرعة الإنترنت الاحترافية */
+        .speedtest-section { margin-top: 25px; border-top: 2px solid rgba(255,255,255,0.2); padding-top: 20px; text-align: center; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; }
+        .speed-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
+        .speed-item { background: rgba(255,255,255,0.08); padding: 12px; border-radius: 8px; }
+        .speed-item span { display: block; font-size: 12px; color: #ccc; }
+        .speed-item strong { font-size: 18px; color: #00ff88; }
 
         /* الجدول وأزرار الإدارة */
         .table-container { overflow-x: auto; border-radius: 8px; display: none; margin-top: 15px; }
@@ -92,63 +95,41 @@
             <div id="messageBox"></div>
         </div>
 
-        <!-- واجهة المشترك (بيانات الاشتراك + متجر الأجهزة + قياس السرعة) -->
+        <!-- واجهة المشترك -->
         <div id="userPanel" class="result-box">
-            <h3 style="text-align: center; color: #d1a3ff;">بيانات الاشتراك</h3>
+            <h3 style="text-align: center; color: #d1a3ff; margin-bottom: 15px;" id="welcomeTitle">👤 أهلاً بك: —</h3>
+            
             <div class="result-item">🟢 حالة الاشتراك: <span id="resStatus" style="font-weight: bold;"></span></div>
             <div class="result-item">📱 رقم الهاتف: <span id="resPhone"></span></div>
             <div class="result-item">🚀 تاريخ التفعيل: <span id="resStart"></span></div>
             <div class="result-item">📅 تاريخ الانتهاء: <span id="resExp"></span></div>
             <div class="result-item">💰 الديون: <span id="resDebt"></span> دينار</div>
             
-            <!-- أداة فحص سرعة الإنترنت -->
+            <!-- أداة فحص سرعة الإنترنت مثل SpeedTest -->
             <div class="speedtest-section">
-                <div style="color: #00ff88; font-size: 18px; margin-bottom: 10px;">⚡ فحص سرعة الإنترنت الحالية</div>
-                <div class="speed-gauge" id="speedResult">اضغط الزر أدناه لبدء الفحص</div>
-                <button class="btn-green" onclick="runSpeedTest()">بدء فحص السرعة</button>
+                <div style="color: #00ff88; font-size: 18px; font-weight: bold;">⚡ فحص سرعة الإنترنت الحقيقية</div>
+                <div class="speed-grid">
+                    <div class="speed-item">
+                        <span>الاستجابة (Ping)</span>
+                        <strong id="pingVal">— ms</strong>
+                    </div>
+                    <div class="speed-item">
+                        <span>التنزيل (Download)</span>
+                        <strong id="downloadVal">— Mbps</strong>
+                    </div>
+                    <div class="speed-item">
+                        <span>الرفع (Upload)</span>
+                        <strong id="uploadVal">— Mbps</strong>
+                    </div>
+                </div>
+                <button class="btn-green" onclick="runSpeedTest()" id="speedBtn">بدء فحص السرعة الآن</button>
             </div>
 
-            <!-- قسم متجر الأجهزة والخدمات -->
+            <!-- قسم متجر الأجهزة والخدمات (يتحدث تلقائياً من المدير) -->
             <div class="store-section">
                 <div class="store-title">🛒 متجر الأجهزة والخدمات المتاحة</div>
-                <div class="products-grid">
-                    
-                    <!-- 1. راوترات -->
-                    <div class="product-card">
-                        <div class="product-img-box">🌐</div>
-                        <h3>راوترات (TP-Link, Tenda)</h3>
-                        <p>راوترات منزلية وأنظمة تغطية كاملة</p>
-                        <div class="product-price">متوفرة عدة موديلات</div>
-                        <a class="btn-buy" href="https://wa.me/9647814122720?text=مرحباً، أريـد الاستفسار عن الراوترات" target="_blank">طلب عبر الواتساب</a>
-                    </div>
-
-                    <!-- 2. صحن لايت بيم / باور بيم -->
-                    <div class="product-card">
-                        <div class="product-img-box">📡</div>
-                        <h3>صحن لايت بيم / باور بيم</h3>
-                        <p>أجهزة بث واستقبال لاسلكي عالي المسافات</p>
-                        <div class="product-price">تواصل لمعرفة السعر</div>
-                        <a class="btn-buy" href="https://wa.me/9647814122720?text=مرحباً، أريـد الاستفسار عن الصحون (LiteBeam / PowerBeam)" target="_blank">طلب عبر الواتساب</a>
-                    </div>
-
-                    <!-- 3. يوبي إس Mini UPS -->
-                    <div class="product-card">
-                        <div class="product-img-box">🔋</div>
-                        <h3>يوبي إس (Mini UPS)</h3>
-                        <p>يبقي الإنترنت شغالاً عند انقطاع الكهرباء</p>
-                        <div class="product-price">متوفر بقوات مختلفة</div>
-                        <a class="btn-buy" href="https://wa.me/9647814122720?text=مرحباً، أريـد الاستفسار عن Mini UPS" target="_blank">طلب عبر الواتساب</a>
-                    </div>
-
-                    <!-- 4. كاميرات مراقبة -->
-                    <div class="product-card">
-                        <div class="product-img-box">📷</div>
-                        <h3>كاميرات مراقبة</h3>
-                        <p>أنظمة حماية أمنية متكاملة للمنازل</p>
-                        <div class="product-price">عروض خاصة</div>
-                        <a class="btn-buy" href="https://wa.me/9647814122720?text=مرحباً، أريـد الاستفسار عن كاميرات المراقبة" target="_blank">طلب عبر الواتساب</a>
-                    </div>
-
+                <div class="products-grid" id="userStoreGrid">
+                    <!-- يتم تعبئتها تلقائياً -->
                 </div>
             </div>
 
@@ -158,46 +139,72 @@
         <!-- لوحة تحكم الإدارة -->
         <div id="adminPanel" class="admin-box">
             <h3 style="text-align: center; color: #00ff88;">لوحة تحكم الإدارة</h3>
-            <div style="max-width:400px; margin:auto;">
-                <input type="text" id="add_user" placeholder="يوزر المشترك (للاضافة او التعديل)">
-                <input type="text" id="add_pass" placeholder="باسورد المشترك">
-                <input type="text" id="add_phone" placeholder="رقم الهاتف">
-                <label style="color:white; font-size:13px; display:block; text-align:right; margin-bottom:5px;">تاريخ التفعيل:</label>
-                <input type="date" id="add_start">
-                <label style="color:white; font-size:13px; display:block; text-align:right; margin-bottom:5px;">تاريخ الانتهاء:</label>
-                <input type="date" id="add_exp">
-                <input type="number" id="add_debt" placeholder="الديون (مثال: 0 أو 5000)">
-                <select id="add_status">
-                    <option value="متصل">متصل</option>
-                    <option value="غير متصل">غير متصل</option>
-                </select>
-                <button class="btn-green" onclick="addNewUser()">حفظ / تعديل بيانات المشترك</button>
-            </div>
             
-            <!-- مربعات الإحصائيات (SAS) -->
-            <div class="dashboard-cards" id="dashCards" style="display: none;">
-                <div class="dash-card card-total"><h4>TOTAL USERS<br>المشتركين</h4><p id="statTotal">0</p></div>
-                <div class="dash-card card-active"><h4>ACTIVE USERS<br>الفعالين</h4><p id="statActive">0</p></div>
-                <div class="dash-card card-expiring"><h4>ABOUT TO EXPIRE<br>ينتهي قريباً</h4><p id="statExpiring">0</p></div>
-                <div class="dash-card card-expired"><h4>EXPIRED USERS<br>المنتهين</h4><p id="statExpired">0</p></div>
-                <div class="dash-card card-debt"><h4>BALANCE<br>إجمالي الديون</h4><p id="statDebt">0 IQD</p></div>
+            <!-- تبويبات المدير (إدارة المشتركين / إدارة المتجر) -->
+            <div style="display:flex; gap:10px; margin-bottom:20px;">
+                <button class="btn-green" onclick="switchAdminTab('users')" id="tabUsersBtn">👥 إدارة المشتركين</button>
+                <button onclick="switchAdminTab('store')" id="tabStoreBtn" style="background:#6c757d;">🛒 إدارة منتجات المتجر</button>
             </div>
 
-            <div class="table-container" id="usersTableContainer">
-                <table id="usersTable">
-                    <thead>
-                        <tr>
-                            <th>اليوزر</th>
-                            <th>الهاتف</th>
-                            <th>التفعيل</th>
-                            <th>الانتهاء</th>
-                            <th>الديون</th>
-                            <th>الحالة</th>
-                            <th>الإجراءات</th>
-                        </tr>
-                    </thead>
-                    <tbody id="usersTableBody"></tbody>
-                </table>
+            <!-- قسم إدارة المشتركين -->
+            <div id="adminUsersSection">
+                <div style="max-width:400px; margin:auto;">
+                    <input type="text" id="add_user" placeholder="يوزر المشترك (مثال: 22)">
+                    <input type="text" id="add_pass" placeholder="باسورد المشترك">
+                    <input type="text" id="add_name" placeholder="اسم المشترك الكامل (مثال: أحمد محمد)">
+                    <input type="text" id="add_phone" placeholder="رقم الهاتف">
+                    <label style="color:white; font-size:13px; display:block; text-align:right; margin-bottom:5px;">تاريخ التفعيل:</label>
+                    <input type="date" id="add_start">
+                    <label style="color:white; font-size:13px; display:block; text-align:right; margin-bottom:5px;">تاريخ الانتهاء:</label>
+                    <input type="date" id="add_exp">
+                    <input type="number" id="add_debt" placeholder="الديون (مثال: 0 أو 5000)">
+                    <select id="add_status">
+                        <option value="متصل">متصل</option>
+                        <option value="غير متصل">غير متصل</option>
+                    </select>
+                    <button class="btn-green" onclick="addNewUser()">حفظ / تعديل بيانات المشترك</button>
+                </div>
+                
+                <div class="dashboard-cards" id="dashCards" style="display: none;">
+                    <div class="dash-card card-total"><h4>TOTAL USERS<br>المشتركين</h4><p id="statTotal">0</p></div>
+                    <div class="dash-card card-active"><h4>ACTIVE USERS<br>الفعالين</h4><p id="statActive">0</p></div>
+                    <div class="dash-card card-expiring"><h4>ABOUT TO EXPIRE<br>ينتهي قريباً</h4><p id="statExpiring">0</p></div>
+                    <div class="dash-card card-expired"><h4>EXPIRED USERS<br>المنتهين</h4><p id="statExpired">0</p></div>
+                    <div class="dash-card card-debt"><h4>BALANCE<br>إجمالي الديون</h4><p id="statDebt">0 IQD</p></div>
+                </div>
+
+                <div class="table-container" id="usersTableContainer">
+                    <table id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>اليوزر</th>
+                                <th>الاسم</th>
+                                <th>الهاتف</th>
+                                <th>الانتهاء</th>
+                                <th>الديون</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- قسم إدارة المتجر -->
+            <div id="adminStoreSection" style="display: none;">
+                <div style="max-width:400px; margin:auto; background:rgba(0,0,0,0.2); padding:15px; border-radius:10px;">
+                    <h4 style="color:#ffd700; margin-top:0; text-align:center;">إضافة منتج جديد للمتجر</h4>
+                    <input type="text" id="prod_name" placeholder="اسم الجهاز أو الخدمة (مثال: راوتر TP-Link)">
+                    <input type="text" id="prod_desc" placeholder="وصف قصير (مثال: تغطية قوية للمنازل)">
+                    <input type="text" id="prod_price" placeholder="السعر (مثال: 35000 أو تواصل لمعرفة السعر)">
+                    <input type="text" id="prod_icon" placeholder="أيقونة أو إيموجي (مثال: 🌐)">
+                    <button class="btn-green" onclick="addProductToStore()">إضافة المنتج للمتجر</button>
+                </div>
+                <div style="margin-top:20px;">
+                    <h4 style="color:#00ff88; text-align:center;">المنتجات الحالية المعروضة للمشتركين</h4>
+                    <div id="adminProductsList" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin-top:10px;"></div>
+                </div>
             </div>
 
             <button class="btn-red" style="max-width:400px; display:block; margin:25px auto 0;" onclick="logout()">تسجيل خروج</button>
@@ -205,31 +212,26 @@
     </div>
 
     <script>
-        /* إعدادات Firebase (اتركها هكذا للعمل المحلي أو ضع بيانات مشروعك للمزامنة السحابية) */
-        const firebaseConfig = {
-            apiKey: "",
-            authDomain: "",
-            projectId: "",
-            storageBucket: "",
-            messagingSenderId: "",
-            appId: ""
-        };
-
+        const firebaseConfig = { apiKey: "", authDomain: "", projectId: "", storageBucket: "", messagingSenderId: "", appId: "" };
         let useCloud = !!firebaseConfig.apiKey && !firebaseConfig.apiKey.includes('AIzaSy...');
         let db = null;
-        if(useCloud){
-            try {
-                firebase.initializeApp(firebaseConfig);
-                db = firebase.firestore();
-            } catch(e) { useCloud = false; }
-        }
+        if(useCloud){ try { firebase.initializeApp(firebaseConfig); db = firebase.firestore(); } catch(e) { useCloud = false; } }
 
-        const LKEY = 'bashar_subs_v1';
-        function loadLocal() { try { return JSON.parse(localStorage.getItem(LKEY) || '[]'); } catch(e) { return []; } }
-        function saveLocal(data) { localStorage.setItem(LKEY, JSON.stringify(data)); }
+        const LKEY = 'bashar_subs_v2';
+        const PKEY = 'bashar_prods_v2';
+
+        function loadLocal(key) { try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) { return []; } }
+        function saveLocal(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
+
+        // المنتجات الافتراضية المبدئية
+        const defaultProducts = [
+            {name: 'راوترات (TP-Link, Tenda)', desc: 'راوترات منزلية وأنظمة تغطية كاملة', price: 'متوفرة عدة موديلات', icon: '🌐'},
+            {name: 'صحن لايت بيم / باور بيم', desc: 'أجهزة بث واستقبال لاسلكي عالي المسافات', price: 'تواصل لمعرفة السعر', icon: '📡'},
+            {name: 'يوبي إس (Mini UPS)', desc: 'يبقي الإنترنت شغالاً عند انقطاع الكهرباء', price: 'متوفر بقوات مختلفة', icon: '🔋'},
+            {name: 'كاميرات مراقبة', desc: 'أنظمة حماية أمنية متكاملة للمنازل', price: 'عروض خاصة', icon: '📷'}
+        ];
 
         let currentRole = 'user';
-
         function setRole(role) {
             currentRole = role;
             const userField = document.getElementById('username');
@@ -248,186 +250,25 @@
             const user = document.getElementById('username').value.trim();
             const pass = document.getElementById('password').value.trim();
             const msgBox = document.getElementById('messageBox');
-            msgBox.style.display = 'block'; 
-            msgBox.style.color = '#d1a3ff'; 
-            msgBox.innerText = 'جاري التحقق...';
+            msgBox.style.display = 'block'; msgBox.style.color = '#d1a3ff'; msgBox.innerText = 'جاري التحقق...';
 
             if(!user || !pass) {
-                msgBox.style.color = '#ff4d4d';
-                msgBox.innerText = '❌ يرجى ادخال اليوزر والباسورد';
+                msgBox.style.color = '#ff4d4d'; msgBox.innerText = '❌ يرجى ادخال اليوزر والباسورد';
                 return;
             }
 
-            // فحص إذا كان دخول مدير
             if(currentRole === 'admin' || user.includes('@') || user === 'bashar@dsc') {
                 if(pass === 'bashar2000' || pass.length >= 6) {
                     document.getElementById('loginSection').style.display = 'none';
                     msgBox.style.display = 'none';
                     document.getElementById('adminPanel').style.display = 'block';
                     loadAllUsers();
+                    loadAdminStore();
                     return;
                 }
             }
 
-            // فحص دخول المشترك
             try {
                 let found = null;
                 if(useCloud) {
-                    const snap = await db.collection('subscribers').where('user', '==', user).get();
-                    snap.forEach(d => {
-                        const x = { id: d.id, ...d.data() };
-                        if(String(x.password) === String(pass)) found = x;
-                    });
-                } else {
-                    const users = loadLocal();
-                    found = users.find(x => x.username === user && String(x.password) === String(pass));
-                }
-
-                if(found) {
-                    document.getElementById('loginSection').style.display = 'none';
-                    msgBox.style.display = 'none';
-                    document.getElementById('resStatus').innerText = found.status || "متصل";
-                    document.getElementById('resStatus').style.color = "#00ff88";
-                    document.getElementById('resPhone').innerText = found.phone || '—';
-                    document.getElementById('resStart').innerText = found.start_date || '—';
-                    document.getElementById('resExp').innerText = found.exp_date || '—';
-                    document.getElementById('resDebt').innerText = found.debt || '0';
-                    document.getElementById('userPanel').style.display = 'block';
-                } else {
-                    msgBox.style.color = '#ff4d4d';
-                    msgBox.innerText = '❌ خطأ في اليوزر أو الباسورد';
-                }
-            } catch(err) {
-                msgBox.style.color = '#ff4d4d';
-                msgBox.innerText = 'خطأ في الاتصال.';
-            }
-        }
-
-        document.getElementById('username').addEventListener('keypress', function(e) { if (e.key === 'Enter') { login(); } });
-        document.getElementById('password').addEventListener('keypress', function(e) { if (e.key === 'Enter') { login(); } });
-
-        async function addNewUser() {
-            const userData = {
-                username: document.getElementById('add_user').value.trim(),
-                password: document.getElementById('add_pass').value.trim(),
-                phone: document.getElementById('add_phone').value.trim(),
-                start_date: document.getElementById('add_start').value,
-                exp_date: document.getElementById('add_exp').value,
-                debt: document.getElementById('add_debt').value || 0,
-                status: document.getElementById('add_status').value
-            };
-
-            if(!userData.username || !userData.password) {
-                alert('❌ الرجاء كتابة يوزر وباسورد!');
-                return;
-            }
-
-            if(useCloud) {
-                await db.collection('subscribers').add(userData);
-            } else {
-                let users = loadLocal();
-                users.push(userData);
-                saveLocal(users);
-            }
-
-            alert('✅ تم الحفظ بنجاح');
-            document.getElementById('add_user').value = '';
-            document.getElementById('add_pass').value = '';
-            document.getElementById('add_phone').value = '';
-            document.getElementById('add_debt').value = '';
-            loadAllUsers();
-        }
-
-        async function loadAllUsers() {
-            let users = [];
-            if(useCloud) {
-                const snap = await db.collection('subscribers').get();
-                users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            } else {
-                users = loadLocal();
-            }
-
-            const tbody = document.getElementById('usersTableBody');
-            tbody.innerHTML = '';
-            document.getElementById('usersTableContainer').style.display = 'block';
-            document.getElementById('dashCards').style.display = 'flex';
-
-            let totalUsers = users.length;
-            let activeUsers = 0;
-            let totalDebtAmount = 0;
-
-            users.forEach(u => {
-                totalDebtAmount += parseInt(u.debt) || 0;
-                activeUsers++;
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${u.username}</td>
-                    <td style="direction:ltr;">${u.phone || '—'}</td>
-                    <td>${u.start_date || '—'}</td>
-                    <td style="font-weight: bold;">${u.exp_date || '—'}</td>
-                    <td style="color:red; font-weight:bold;">${u.debt || 0}</td>
-                    <td style="color: green; font-weight:bold;">${u.status || 'متصل'}</td>
-                    <td>
-                        <button class="btn-action btn-wa" onclick="sendWhatsApp('${u.phone}', '${u.debt}')">واتساب</button>
-                        <button class="btn-action btn-del" onclick="deleteUser('${u.username}')">حذف</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            document.getElementById('statTotal').innerText = totalUsers;
-            document.getElementById('statActive').innerText = activeUsers;
-            document.getElementById('statDebt').innerText = totalDebtAmount.toLocaleString('en-US') + " IQD";
-        }
-
-        async function deleteUser(username) {
-            if(!confirm(`هل أنت متأكد من حذف المشترك: ${username} ؟`)) return;
-            if(useCloud) {
-                const snap = await db.collection('subscribers').where('username', '==', username).get();
-                snap.forEach(async d => { await d.ref.delete(); });
-            } else {
-                let users = loadLocal();
-                users = users.filter(u => u.username !== username);
-                saveLocal(users);
-            }
-            loadAllUsers();
-        }
-
-        function sendWhatsApp(phone, debt) {
-            if(!phone) { alert('لا يوجد رقم هاتف'); return; }
-            let formattedPhone = phone;
-            if(formattedPhone.startsWith('0')) {
-                formattedPhone = "964" + formattedPhone.substring(1);
-            }
-            const msg = `تحية طيبة\nنود اعلامكم بأن اشتراككم بخدمة الانترنت بشار الالوسي شارف على الانتهاء للاستمرار بالتمتع بخدماتنا يرجى تجديد الاشتراك من خلال التواصل معنا مباشرة\nالطلب الحالي: ${debt} دينار`;
-            window.open(`https://wa.me/${formattedPhone}?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-
-        // أداة قياس السرعة الفعلية
-        async function runSpeedTest() {
-            const resBox = document.getElementById('speedResult');
-            resBox.innerText = "⏳ جاري قياس السرعة...";
-            try {
-                const startTime = performance.now();
-                // تحميل ملف اختباري صغير من Cloudflare لقياس السرعة
-                const response = await fetch('https://speed.cloudflare.com/__down?bytes=3000000', { cache: 'no-store' });
-                const blob = await response.blob();
-                const endTime = performance.now();
-                const duration = (endTime - startTime) / 1000;
-                const bitsLoaded = blob.size * 8;
-                const speedBps = bitsLoaded / duration;
-                const speedMbps = (speedBps / 1024 / 1024).toFixed(1);
-                
-                resBox.innerHTML = `⚡ السرعة الحالية: <span style="color:#ffd700">${speedMbps} Mbps</span>`;
-            } catch(e) {
-                resBox.innerText = "⚠️ تعذر القياس، تحقق من الاتصال";
-            }
-        }
-
-        function logout() {
-            location.reload();
-        }
-    </script>
-</body>
-</html>
+                    const snap = await
