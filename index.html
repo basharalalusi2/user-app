@@ -481,7 +481,7 @@ function watchData(){
 }
 
 const LOCAL_ADMIN = 'bashar_admin_v1';
-const SESSION_KEY = 'bashar_session_v1'; // لحفظ جلسة الدخول وتفادي الخروج عند التحديث
+const SESSION_KEY = 'bashar_session_v1';
 
 function getLocalAdmin(){ try{ return JSON.parse(localStorage.getItem(LOCAL_ADMIN)||'null'); }catch(e){ return null; } }
 function setLocalAdmin(o){ localStorage.setItem(LOCAL_ADMIN, JSON.stringify(o)); }
@@ -1056,7 +1056,6 @@ $('btnRemindAll').onclick = ()=>{
   due.forEach((s,i)=> setTimeout(()=> window.open('https://wa.me/'+waNum(s.phone)+'?text='+encodeURIComponent(reminderMsg(s)),'_blank'), i*600));
 };
 
-// فحص الجلسة السابقة لضمان عدم الخروج عند تحديث الصفحة (Refresh)
 function checkExistingSession(){
   const session = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
   if(!session) {
@@ -1072,7 +1071,6 @@ function checkExistingSession(){
   }
 }
 
-// التشغيل الأولي
 checkExistingSession();
 </script>
 </body>
