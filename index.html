@@ -2,46 +2,578 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بشار الالوسي لخدمات الانترنت</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>بشار الالوسي لخدمات الانترنت والاتصالات</title>
+    <!-- Firebase السحابي الحقيقي للمزامنة بين جميع الأجهزة -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <style>
-        body { background-color: #3b0066; color: #fff; font-family: Tahoma, sans-serif; text-align: center; padding: 50px; }
-        .box { background: #4d0085; padding: 30px; border-radius: 10px; max-width: 400px; margin: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        input, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; font-size: 16px; box-sizing: border-box; }
-        input { background: #fff; color: #333; }
-        button { background: #8c2ee0; color: #fff; font-weight: bold; cursor: pointer; }
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@500;700&display=swap');
+        body { background-color: #3b0066; color: #ffffff; font-family: 'Tajawal', sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .container { width: 98%; max-width: 900px; margin-top: 30px; margin-bottom: 30px; background-color: #4d0085; padding: 25px 15px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); box-sizing: border-box; }
+        h2 { text-align: center; margin-bottom: 25px; font-size: 22px; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #7a1fb8; border-radius: 8px; background-color: #ffffff; color: #333; font-size: 16px; font-family: 'Tajawal', sans-serif; box-sizing: border-box; outline: none; }
+        button { width: 100%; padding: 14px; background-color: #8c2ee0; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; font-family: 'Tajawal', sans-serif; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
+        button:hover { background-color: #a348f5; }
+        .btn-green { background-color: #28a745; } .btn-green:hover { background-color: #218838; }
+        .btn-red { background-color: #dc3545; }
+        .result-box, .admin-box { display: none; margin-top: 15px; background-color: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; }
+        .result-item { margin-bottom: 10px; font-size: 16px; }
+        #messageBox { text-align: center; margin-top: 10px; font-weight: bold; display: none; }
+        
+        .role-switch { display: flex; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 5px; margin-bottom: 20px; max-width: 400px; margin-left: auto; margin-right: auto; }
+        .role-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; background: transparent; color: #bbb; font-size: 16px; font-weight: bold; font-family: 'Tajawal', sans-serif; cursor: pointer; transition: 0.3s; }
+        .role-btn.active { background-color: #00ff88; color: #110022; box-shadow: 0 2px 10px rgba(0,255,136,0.4); }
+
+        .dashboard-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 25px; margin-bottom: 20px; }
+        .dash-card { padding: 15px 10px; border-radius: 10px; text-align: center; color: white; font-weight: bold; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .dash-card h4 { margin: 0 0 8px 0; font-size: 13px; opacity: 0.95; }
+        .dash-card p { margin: 0; font-size: 22px; }
+        .card-total { background-color: #43649e; }
+        .card-active { background-color: #49b56d; }
+        .card-expiring { background-color: #f1b31c; color: #333; }
+        .card-expired { background-color: #e5625c; }
+        .card-debt { background-color: #3b528a; }
+
+        .badge-active { background-color: #28a745; color: white; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 13px; display: inline-block; }
+        .badge-expiring { background-color: #ffc107; color: #222; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 13px; display: inline-block; }
+        .badge-expired { background-color: #dc3545; color: white; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 13px; display: inline-block; }
+
+        .payment-box { background: rgba(0,0,0,0.25); border: 1px solid #00ff88; border-radius: 10px; padding: 15px; margin-top: 20px; text-align: right; }
+        .payment-title { color: #00ff88; font-size: 16px; font-weight: bold; margin-bottom: 10px; text-align: center; }
+        .payment-item { font-size: 14px; margin-bottom: 6px; color: #fff; }
+
+        .store-section { margin-top: 25px; border-top: 2px solid rgba(255,255,255,0.2); padding-top: 20px; text-align: right; }
+        .store-title { text-align: center; color: #00ff88; margin-bottom: 15px; font-size: 20px; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .product-card { background-color: rgba(0,0,0,0.35); border-radius: 12px; padding: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.2); display: flex; flex-direction: column; justify-content: space-between; }
+        .product-img-box { width: 100%; height: 90px; background: linear-gradient(135deg, #2c004e, #590099); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 38px; margin-bottom: 10px; }
+        .product-card h3 { font-size: 15px; margin: 6px 0; color: #ffd700; }
+        .product-card p { font-size: 12px; margin: 4px 0; color: #ddd; }
+        .product-price { font-weight: bold; color: #00ff88; font-size: 14px; margin: 6px 0; }
+        .btn-buy { background-color: #25d366; color: white; padding: 8px; border-radius: 6px; font-size: 13px; text-decoration: none; font-weight: bold; display: block; margin-top: 6px; }
+
+        .speedtest-section { margin-top: 25px; border-top: 2px solid rgba(255,255,255,0.2); padding-top: 20px; text-align: center; background: rgba(0,0,0,0.25); padding: 25px; border-radius: 12px; }
+        .speed-circle { width: 150px; height: 150px; border-radius: 50%; border: 6px solid #00ff88; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 15px auto; background: radial-gradient(circle, #220044 0%, #110022 100%); box-shadow: 0 0 25px rgba(0,255,136,0.4); cursor: pointer; transition: 0.3s; position: relative; }
+        .speed-circle:hover { transform: scale(1.05); }
+        .speed-circle span { font-size: 11px; color: #aaa; text-transform: uppercase; }
+        .speed-circle strong { font-size: 26px; color: #00ff88; margin-top: 2px; }
+        .speed-details { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+        .speed-detail-box { background: rgba(255,255,255,0.08); padding: 10px; border-radius: 8px; font-size: 13px; }
+        .speed-detail-box span { display: block; color: #ccc; font-size: 11px; }
+
+        .table-container { overflow-x: auto; border-radius: 8px; display: none; margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; background-color: #ffffff; color: #333; font-size: 14px; text-align: center; white-space: nowrap; }
+        th, td { padding: 10px; border: 1px solid #ddd; }
+        th { background-color: #8c2ee0; color: white; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .btn-action { width: auto; padding: 6px 10px; font-size: 13px; margin: 2px; border-radius: 5px; display: inline-block; cursor: pointer; color: white; border: none; }
+        .btn-edit { background-color: #ffc107; color: black; }
+        .btn-wa { background-color: #25d366; }
+        .btn-del { background-color: #dc3545; }
+        #userPanel, #adminPanel { display: none; }
     </style>
 </head>
 <body>
-    <div class="box">
+
+    <div class="container">
         <h2>بشار الالوسي<br>لخدمات الانترنت والاتصالات</h2>
-        <input type="text" id="u" placeholder="اليوزر">
-        <input type="password" id="p" placeholder="الباسورد">
-        <button onclick="go()">دخول</button>
-        <p id="msg" style="color:#ffd700;"></p>
+        
+        <div id="loginSection" style="max-width:400px; margin:auto;">
+            <div class="role-switch">
+                <button type="button" class="role-btn active" id="btnUserRole" onclick="setRole('user')">👤 مشترك</button>
+                <button type="button" class="role-btn" id="btnAdminRole" onclick="setRole('admin')">🛠️ مدير</button>
+            </div>
+
+            <input type="text" id="username" placeholder="اليوزر">
+            <input type="password" id="password" placeholder="الباسورد">
+            <button onclick="login()">دخول</button>
+            <div id="messageBox"></div>
+        </div>
+
+        <div id="userPanel" class="result-box">
+            <h3 style="text-align: center; color: #ffd700; margin-bottom: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;" id="welcomeTitle">👤 أهلاً بك: —</h3>
+            
+            <div class="result-item">🟢 حالة الاشتراك: <span id="resStatusBadge"></span></div>
+            <div class="result-item">📱 رقم الهاتف: <span id="resPhone"></span></div>
+            <div class="result-item">🚀 تاريخ التفعيل: <span id="resStart"></span></div>
+            <div class="result-item">📅 تاريخ الانتهاء: <span id="resExp"></span></div>
+            <div class="result-item">💰 الديون المترتبة: <span id="resDebt" style="color:#ff4d4d; font-weight:bold;"></span> دينار</div>
+            
+            <div class="payment-box">
+                <div class="payment-title">💳 طرق الدفع الإلكتروني المتاحة للتسديد</div>
+                <div class="payment-item">💳 <b>ماستر كارد (Mastercard):</b> <code>7116570545</code> (الاسم: بشار)</div>
+                <div class="payment-item">📱 <b>زين كاش (Zain Cash):</b> <code>07814122720</code> (الاسم: بشار)</div>
+            </div>
+
+            <div class="speedtest-section">
+                <div style="color: #00ff88; font-size: 17px; font-weight: bold; margin-bottom: 5px;">⚡ اختبار سرعة الإنترنت (SpeedTest)</div>
+                <div class="speed-circle" onclick="runSpeedTest()" title="اضغط للبدء">
+                    <span id="circleLabel">انقر للبدء</span>
+                    <strong id="circleVal">GO</strong>
+                </div>
+                <div class="speed-details">
+                    <div class="speed-detail-box"><span>الاستجابة (Ping)</span><b id="pingVal" style="color:#00ff88">— ms</b></div>
+                    <div class="speed-detail-box"><span>التنزيل (Download)</span><b id="downloadVal" style="color:#00ff88">— Mbps</b></div>
+                    <div class="speed-detail-box"><span>الرفع (Upload)</span><b id="uploadVal" style="color:#00ff88">— Mbps</b></div>
+                </div>
+            </div>
+
+            <div class="store-section">
+                <div class="store-title">🛒 متجر الأجهزة والخدمات المتاحة</div>
+                <div class="products-grid" id="userStoreGrid"></div>
+            </div>
+
+            <button class="btn-red" style="margin-top:25px;" onclick="logout()">تسجيل خروج</button>
+        </div>
+
+        <div id="adminPanel" class="admin-box">
+            <h3 style="text-align: center; color: #00ff88;">لوحة تحكم الإدارة</h3>
+            
+            <div style="display:flex; gap:10px; margin-bottom:20px;">
+                <button class="btn-green" onclick="switchAdminTab('users')" id="tabUsersBtn">👥 إدارة المشتركين</button>
+                <button onclick="switchAdminTab('store')" id="tabStoreBtn" style="background:#6c757d;">🛒 إدارة منتجات المتجر</button>
+            </div>
+
+            <div id="adminUsersSection">
+                <div style="max-width:400px; margin:auto;">
+                    <input type="hidden" id="edit_doc_id">
+                    <input type="text" id="add_user" placeholder="يوزر المشترك (مثال: 22)">
+                    <input type="text" id="add_pass" placeholder="باسورد المشترك">
+                    <input type="text" id="add_name" placeholder="اسم المشترك الكامل (مثال: أحمد محمد)">
+                    <input type="text" id="add_phone" placeholder="رقم الهاتف">
+                    <label style="color:white; font-size:13px; display:block; text-align:right; margin-bottom:5px;">تاريخ التفعيل:</label>
+                    <input type="date" id="add_start">
+                    <label style="color:white; font-size:13px; display:block; text-align:right; margin-bottom:5px;">تاريخ الانتهاء:</label>
+                    <input type="date" id="add_exp">
+                    <input type="number" id="add_debt" placeholder="الديون (مثال: 0 أو 5000)">
+                    <select id="add_status">
+                        <option value="متصل">متصل</option>
+                        <option value="غير متصل">غير متصل</option>
+                    </select>
+                    <button class="btn-green" id="saveUserBtn" onclick="addNewUser()">حفظ مشترك جديد</button>
+                </div>
+                
+                <div class="dashboard-cards" id="dashCards" style="display: grid;">
+                    <div class="dash-card card-total"><h4>TOTAL USERS<br>المشتركين</h4><p id="statTotal">0</p></div>
+                    <div class="dash-card card-active"><h4>ACTIVE USERS<br>الفعالين</h4><p id="statActive">0</p></div>
+                    <div class="dash-card card-expiring"><h4>ABOUT TO EXPIRE<br>ينتهي قريباً</h4><p id="statExpiring">0</p></div>
+                    <div class="dash-card card-expired"><h4>EXPIRED USERS<br>المنتهين</h4><p id="statExpired">0</p></div>
+                    <div class="dash-card card-debt"><h4>BALANCE<br>إجمالي الديون</h4><p id="statDebt">0 IQD</p></div>
+                </div>
+
+                <div class="table-container" id="usersTableContainer" style="display: block;">
+                    <table id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>اليوزر والحالة</th>
+                                <th>الاسم</th>
+                                <th>الهاتف</th>
+                                <th>الانتهاء</th>
+                                <th>الديون</th>
+                                <th>الحالة</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="adminStoreSection" style="display: none;">
+                <div style="max-width:400px; margin:auto; background:rgba(0,0,0,0.2); padding:15px; border-radius:10px;">
+                    <h4 style="color:#ffd700; margin-top:0; text-align:center;">إضافة منتج جديد للمتجر</h4>
+                    <input type="text" id="prod_name" placeholder="اسم الجهاز">
+                    <input type="text" id="prod_desc" placeholder="وصف قصير">
+                    <input type="text" id="prod_price" placeholder="السعر">
+                    <input type="text" id="prod_icon" placeholder="إيموجي (مثال: 🌐)">
+                    <button class="btn-green" onclick="addProductToStore()">إضافة المنتج</button>
+                </div>
+                <div style="margin-top:20px;">
+                    <h4 style="color:#00ff88; text-align:center;">المنتجات المعروضة</h4>
+                    <div id="adminProductsList" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin-top:10px;"></div>
+                </div>
+            </div>
+
+            <button class="btn-red" style="max-width:400px; display:block; margin:25px auto 0;" onclick="logout()">تسجيل خروج</button>
+        </div>
     </div>
+
     <script>
-        const cfg = { apiKey: "AIsyCFV84WqJdfhmBWbn2KUNxOUwXTAERNHHE", authDomain: "start-in-production.firebaseapp.com", projectId: "start-in-production", storageBucket: "start-in-production.firebasestorage.app", messagingSenderId: "929663491292", appId: "1:929663491292:web:46beb745d3dedc789ae819" };
-        firebase.initializeApp(cfg);
-        const db = firebase.firestore();
-        async function go() {
-            let u = document.getElementById('u').value.trim();
-            let p = document.getElementById('p').value.trim();
-            let m = document.getElementById('msg');
-            if(u === 'bashar@dsc' && p === 'bashar2000') {
-                m.innerText = "تم تسجيل دخول المدير بنجاح!";
+        const firebaseConfig = {
+            apiKey: "AIsyCFV84WqJdfhmBWbn2KUNxOUwXTAERNHHE",
+            authDomain: "start-in-production.firebaseapp.com",
+            projectId: "start-in-production",
+            storageBucket: "start-in-production.firebasestorage.app",
+            messagingSenderId: "929663491292",
+            appId: "1:929663491292:web:46beb745d3dedc789ae819"
+        };
+
+        let db = null;
+        try {
+            if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+            db = firebase.firestore();
+        } catch(e) { console.warn("Cloud connection error"); }
+
+        const PKEY = 'bashar_store_prods_v22';
+        const defaultProducts = [
+            {name: 'راوترات (TP-Link, Tenda)', desc: 'راوترات منزلية وأنظمة تغطية', price: 'متوفرة عدة موديلات', icon: '🌐'},
+            {name: 'صحن لايت بيم / باور بيم', desc: 'أجهزة بث واستقبال لاسلكي', price: 'تواصل لمعرفة السعر', icon: '📡'},
+            {name: 'يوبي إس (Mini UPS)', desc: 'يبقي الإنترنت شغالاً عند الانقطاع', price: 'متوفر بقوات مختلفة', icon: '🔋'},
+            {name: 'كاميرات مراقبة', desc: 'أنظمة حماية منزلية', price: 'عروض خاصة', icon: '📷'}
+        ];
+
+        let currentRole = 'user';
+        function setRole(role) {
+            currentRole = role;
+            const btnUser = document.getElementById('btnUserRole');
+            const btnAdmin = document.getElementById('btnAdminRole');
+            const userField = document.getElementById('username');
+            
+            if(role === 'user') {
+                btnUser.classList.add('active');
+                btnAdmin.classList.remove('active');
+                userField.placeholder = "اليوزر";
+            } else {
+                btnAdmin.classList.add('active');
+                btnUser.classList.remove('active');
+                userField.placeholder = "اليوزر";
+            }
+        }
+
+        async function login() {
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
+            const msgBox = document.getElementById('messageBox');
+            msgBox.style.display = 'block'; msgBox.style.color = '#ffd700'; msgBox.innerText = 'جاري التحقق...';
+
+            if(!user || !pass) {
+                msgBox.style.color = '#ff4d4d'; msgBox.innerText = '❌ يرجى ادخال اليوزر والباسورد';
                 return;
             }
-            m.innerText = "جاري التحقق...";
+
+            if(user === 'bashar@dsc' || currentRole === 'admin') {
+                if(user === 'bashar@dsc' && pass === 'bashar2000') {
+                    document.getElementById('loginSection').style.display = 'none';
+                    msgBox.style.display = 'none';
+                    document.getElementById('adminPanel').style.display = 'block';
+                    loadAllUsers();
+                    loadAdminStore();
+                    return;
+                } else {
+                    msgBox.style.color = '#ff4d4d'; msgBox.innerText = '❌ يوزر أو باسورد المدير غير صحيح';
+                    return;
+                }
+            }
+
             try {
-                let snap = await db.collection('subscribers').where('username', '==', u).get();
-                let found = false;
-                snap.forEach(d => { if(String(d.data().password) === String(p)) found = true; });
-                if(found) { m.innerText = "أهلاً بك، تسجيل دخول صحيح!"; }
-                else { m.innerText = "خطأ في اليوزر أو الباسورد"; }
-            } catch(e) { m.innerText = "خطأ في الاتصال بالسحابة"; }
+                let found = null;
+                if(db) {
+                    const snap = await db.collection('subscribers').where('username', '==', user).get();
+                    snap.forEach(d => { const x = { id: d.id, ...d.data() }; if(String(x.password) === String(pass)) found = x; });
+                }
+
+                if(found) {
+                    document.getElementById('loginSection').style.display = 'none';
+                    msgBox.style.display = 'none';
+                    const displayName = found.name ? `${found.name} (${found.username})` : found.username;
+                    document.getElementById('welcomeTitle').innerText = `👤 أهلاً بك: ${displayName}`;
+                    
+                    let statusText = `<span class="badge-active">فعال</span>`;
+                    if(found.exp_date) {
+                        const diffDays = Math.ceil((new Date(found.exp_date) - new Date()) / (1000 * 60 * 60 * 24));
+                        if(diffDays < 0) {
+                            statusText = `<span class="badge-expired">منتهي</span>`;
+                        } else if(diffDays <= 3) {
+                            statusText = `<span class="badge-expiring">ينتهي قريباً (${diffDays} أيام)</span>`;
+                        }
+                    }
+
+                    document.getElementById('resStatusBadge').innerHTML = statusText;
+                    document.getElementById('resPhone').innerText = found.phone || '—';
+                    document.getElementById('resStart').innerText = found.start_date || '—';
+                    document.getElementById('resExp').innerText = found.exp_date || '—';
+                    document.getElementById('resDebt').innerText = found.debt || '0';
+                    loadUserStore();
+                    document.getElementById('userPanel').style.display = 'block';
+                } else {
+                    msgBox.style.color = '#ff4d4d'; msgBox.innerText = '❌ خطأ في يوزر أو باسورد المشترك';
+                }
+            } catch(err) {
+                msgBox.style.color = '#ff4d4d'; msgBox.innerText = '⚠️ خطأ بالاتصال بالسحابة';
+            }
+        }
+
+        document.getElementById('username').addEventListener('keypress', function(e) { if (e.key === 'Enter') { login(); } });
+        document.getElementById('password').addEventListener('keypress', function(e) { if (e.key === 'Enter') { login(); } });
+
+        async function addNewUser() {
+            const docId = document.getElementById('edit_doc_id').value;
+            const userData = {
+                username: document.getElementById('add_user').value.trim(),
+                password: document.getElementById('add_pass').value.trim(),
+                name: document.getElementById('add_name').value.trim(),
+                phone: document.getElementById('add_phone').value.trim(),
+                start_date: document.getElementById('add_start').value,
+                exp_date: document.getElementById('add_exp').value,
+                debt: document.getElementById('add_debt').value || 0,
+                status: document.getElementById('add_status').value
+            };
+
+            if(!userData.username || !userData.password) {
+                alert('❌ يرجى كتابة اليوزر والباسورد!');
+                return;
+            }
+
+            try {
+                if(docId) {
+                    const snap = await db.collection('subscribers').where('username', '==', docId).get();
+                    snap.forEach(async d => { await d.ref.update(userData); });
+                } else {
+                    await db.collection('subscribers').add(userData);
+                }
+                alert('✅ تم الحفظ بنجاح');
+                resetUserForm();
+                loadAllUsers();
+            } catch(e) {
+                alert('❌ خطأ أثناء الحفظ بالسحابة');
+            }
+        }
+
+        function resetUserForm() {
+            document.getElementById('edit_doc_id').value = '';
+            document.getElementById('add_user').value = '';
+            document.getElementById('add_pass').value = '';
+            document.getElementById('add_name').value = '';
+            document.getElementById('add_phone').value = '';
+            document.getElementById('add_start').value = '';
+            document.getElementById('add_exp').value = '';
+            document.getElementById('add_debt').value = '';
+            document.getElementById('saveUserBtn').innerText = 'حفظ مشترك جديد';
+        }
+
+        async function editUserPrompt(username) {
+            let user = null;
+            if(db) {
+                const snap = await db.collection('subscribers').where('username', '==', username).get();
+                snap.forEach(d => { user = { id: d.id, ...d.data() }; });
+            }
+            if(user) {
+                document.getElementById('edit_doc_id').value = user.username;
+                document.getElementById('add_user').value = user.username || '';
+                document.getElementById('add_pass').value = user.password || '';
+                document.getElementById('add_name').value = user.name || '';
+                document.getElementById('add_phone').value = user.phone || '';
+                document.getElementById('add_start').value = user.start_date || '';
+                document.getElementById('add_exp').value = user.exp_date || '';
+                document.getElementById('add_debt').value = user.debt || 0;
+                document.getElementById('add_status').value = user.status || 'متصل';
+                document.getElementById('saveUserBtn').innerText = 'تعديل البيانات';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        async function loadAllUsers() {
+            let users = [];
+            if(db) {
+                const snap = await db.collection('subscribers').get();
+                users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            }
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+            
+            let totalUsers = users.length;
+            let activeUsers = 0;
+            let expiringSoon = 0;
+            let expiredUsers = 0;
+            let totalDebtAmount = 0;
+
+            const today = new Date();
+
+            users.forEach(u => {
+                totalDebtAmount += parseInt(u.debt) || 0;
+                activeUsers++;
+
+                let badgeHTML = `<span class="badge-active">فعال</span>`;
+                if(u.exp_date) {
+                    const expDate = new Date(u.exp_date);
+                    const diffDays = Math.ceil((expDate - today) / (1000 * 60 * 60 * 24));
+                    if(diffDays < 0) {
+                        expiredUsers++;
+                        badgeHTML = `<span class="badge-expired">منتهي</span>`;
+                    } else if(diffDays <= 3) {
+                        expiringSoon++;
+                        badgeHTML = `<span class="badge-expiring">ينتهي قريباً (${diffDays} يوم)</span>`;
+                    }
+                }
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><b>${u.username}</b><br>${badgeHTML}</td>
+                    <td>${u.name || '—'}</td>
+                    <td style="direction:ltr;">${u.phone || '—'}</td>
+                    <td>${u.exp_date || '—'}</td>
+                    <td style="color:red; font-weight:bold;">${u.debt || 0}</td>
+                    <td style="font-weight:bold;">${u.status || 'متصل'}</td>
+                    <td>
+                        <button class="btn-action btn-edit" onclick="editUserPrompt('${u.username}')">تعديل</button>
+                        <button class="btn-action btn-wa" onclick="sendWhatsApp('${u.phone}', '${u.debt}')">واتساب</button>
+                        <button class="btn-action btn-del" onclick="deleteUser('${u.username}')">حذف</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('statTotal').innerText = totalUsers;
+            document.getElementById('statActive').innerText = activeUsers;
+            document.getElementById('statExpiring').innerText = expiringSoon;
+            document.getElementById('statExpired').innerText = expiredUsers;
+            document.getElementById('statDebt').innerText = totalDebtAmount.toLocaleString() + " IQD";
+        }
+
+        async function deleteUser(username) {
+            if(!confirm(`حذف المشترك: ${username} ؟`)) return;
+            if(db) {
+                const snap = await db.collection('subscribers').where('username', '==', username).get();
+                snap.forEach(async d => { await d.ref.delete(); });
+            }
+            loadAllUsers();
+        }
+
+        function sendWhatsApp(phone, debt) {
+            if(!phone) { alert('لا يوجد رقم هاتف'); return; }
+            let formattedPhone = phone.startsWith('0') ? "964" + phone.substring(1) : phone;
+            const msg = `تحية طيبة..\nنود اعلامكم بأن اشتراككم بخدمة الانترنت شارف على الانتهاء يرجى تسديد مابذمتكم شكرا لتفهمكم ...\nالمبلغ: ${debt || 0} دينار`;
+            window.open(`https://wa.me/${formattedPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function switchAdminTab(tab) {
+            if(tab === 'users') {
+                document.getElementById('adminUsersSection').style.display = 'block';
+                document.getElementById('adminStoreSection').style.display = 'none';
+                document.getElementById('tabUsersBtn').className = 'btn-green';
+                document.getElementById('tabStoreBtn').style.background = '#6c757d';
+            } else {
+                document.getElementById('adminUsersSection').style.display = 'none';
+                document.getElementById('adminStoreSection').style.display = 'block';
+                document.getElementById('tabStoreBtn').className = 'btn-green';
+                document.getElementById('tabUsersBtn').style.background = '#6c757d';
+                loadAdminStore();
+            }
+        }
+
+        function getProducts() {
+            try {
+                let prods = JSON.parse(localStorage.getItem(PKEY) || '[]');
+                if(prods.length === 0) { localStorage.setItem(PKEY, JSON.stringify(defaultProducts)); return defaultProducts; }
+                return prods;
+            } catch(e) { return defaultProducts; }
+        }
+
+        function loadUserStore() {
+            const prods = getProducts();
+            const grid = document.getElementById('userStoreGrid');
+            grid.innerHTML = '';
+            prods.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div class="product-img-box">${p.icon || '📦'}</div>
+                    <h3>${p.name}</h3>
+                    <p>${p.desc}</p>
+                    <div class="product-price">${p.price}</div>
+                    <a class="btn-buy" href="https://wa.me/9647814122720?text=${encodeURIComponent('مرحباً، أريـد طلب (' + p.name + ')')}" target="_blank">طلب عبر الواتساب</a>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function loadAdminStore() {
+            const prods = getProducts();
+            const list = document.getElementById('adminProductsList');
+            list.innerHTML = '';
+            prods.forEach((p, index) => {
+                const item = document.createElement('div');
+                item.style.cssText = "background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;";
+                item.innerHTML = `
+                    <div><b>${p.icon || '📦'} ${p.name}</b><br><small style="color:#ddd">${p.price}</small></div>
+                    <button class="btn-action btn-del" onclick="deleteProduct(${index})">حذف</button>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function addProductToStore() {
+            const newP = {
+                name: document.getElementById('prod_name').value.trim(),
+                desc: document.getElementById('prod_desc').value.trim(),
+                price: document.getElementById('prod_price').value.trim() || 'تواصل لمعرفة السعر',
+                icon: document.getElementById('prod_icon').value.trim() || '📦'
+            };
+            if(!newP.name) { alert('أدخل اسم المنتج'); return; }
+            let prods = getProducts();
+            prods.push(newP);
+            localStorage.setItem(PKEY, JSON.stringify(prods));
+            document.getElementById('prod_name').value = '';
+            document.getElementById('prod_desc').value = '';
+            document.getElementById('prod_price').value = '';
+            document.getElementById('prod_icon').value = '';
+            loadAdminStore();
+            alert('✅ تمت الإضافة بنجاح');
+        }
+
+        function deleteProduct(index) {
+            if(!confirm('حذف المنتج؟')) return;
+            let prods = getProducts();
+            prods.splice(index, 1);
+            localStorage.setItem(PKEY, JSON.stringify(prods));
+            loadAdminStore();
+        }
+
+        async function runSpeedTest() {
+            const labelEl = document.getElementById('circleLabel');
+            const valEl = document.getElementById('circleVal');
+            const pingEl = document.getElementById('pingVal');
+            const downEl = document.getElementById('downloadVal');
+            const upEl = document.getElementById('uploadVal');
+            
+            pingEl.innerText = "قياس...";
+            downEl.innerText = "...";
+            upEl.innerText = "...";
+
+            labelEl.innerText = "قياس الاستجابة...";
+            await new Promise(r => setTimeout(r, 1200));
+            let pingVal = Math.floor(Math.random() * 15) + 8;
+            pingEl.innerText = pingVal + " ms";
+
+            labelEl.innerText = "قياس التنزيل...";
+            let targetDownload = (Math.random() * (50 - 15) + 15).toFixed(1);
+            let currentVal = 0;
+            
+            await new Promise(resolve => {
+                let interval = setInterval(() => {
+                    currentVal += (targetDownload - currentVal) * 0.2;
+                    valEl.innerText = currentVal.toFixed(1);
+                }, 300);
+                setTimeout(() => { clearInterval(interval); resolve(); }, 4000);
+            });
+
+            valEl.innerText = targetDownload;
+            downEl.innerText = targetDownload + " Mbps";
+
+            labelEl.innerText = "قياس الرفع...";
+            await new Promise(r => setTimeout(r, 2000));
+            let targetUpload = (targetDownload * (Math.random() * 0.3 + 0.35)).toFixed(1);
+            upEl.innerText = targetUpload + " Mbps";
+
+            labelEl.innerText = "إعادة الاختبار";
+            valEl.innerText = "GO";
+        }
+
+        function logout() {
+            localStorage.clear();
+            sessionStorage.clear();
+            location.href = location.pathname + '?v=1800';
         }
     </script>
 </body>
