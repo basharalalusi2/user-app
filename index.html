@@ -225,8 +225,8 @@
     </div>
 
     <script>
-        const STORAGE_KEY = 'bashar_all_subscribers_v10';
-        const PKEY = 'bashar_store_prods_v10';
+        const STORAGE_KEY = 'bashar_all_subscribers_v11';
+        const PKEY = 'bashar_store_prods_v11';
 
         function loadData() {
             try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) { return []; }
@@ -268,17 +268,28 @@
                 return;
             }
 
-            if(currentRole === 'admin' || user.includes('@') || user === 'bashar@dsc') {
-                if(pass === 'bashar2000' || pass.length >= 6) {
+            // التحقق الصارم من المدير
+            if(currentRole === 'admin') {
+                if(user === 'bashar@dsc' && pass === 'bashar2000') {
                     document.getElementById('loginSection').style.display = 'none';
                     msgBox.style.display = 'none';
                     document.getElementById('adminPanel').style.display = 'block';
                     loadAllUsers();
                     loadAdminStore();
                     return;
+                } else {
+                    msgBox.style.color = '#ff4d4d'; msgBox.innerText = '❌ يوزر أو باسورد المدير غير صحيح';
+                    return;
                 }
             }
 
+            // منع المدير من الدخول عبر زر المشترك
+            if(user === 'bashar@dsc') {
+                msgBox.style.color = '#ff4d4d'; msgBox.innerText = '❌ يرجى اختيار تبويب "مدير" لتسجيل دخول الإدارة';
+                return;
+            }
+
+            // التحقق من حساب المشترك
             const users = loadData();
             const found = users.find(x => x.username === user && String(x.password) === String(pass));
 
@@ -332,7 +343,7 @@
             }
             saveData(users);
 
-            alert('✅ تم الحفظ بنجاح');
+            alert('✅ تم حفظ المشترك بنجاح');
             resetUserForm();
             loadAllUsers();
         }
@@ -505,7 +516,7 @@
             loadAdminStore();
         }
 
-        /* قياس السرعة الدقيق (15 ثانية مع عداد متدفق داخل الدائرة) */
+        /* قياس السرعة الدقيق (15 ثانية) */
         async function runSpeedTest() {
             const labelEl = document.getElementById('circleLabel');
             const valEl = document.getElementById('circleVal');
@@ -543,7 +554,7 @@
                 setTimeout(() => {
                     clearInterval(interval);
                     resolve();
-                }, 12000); // يستغرق 12-15 ثانية فحص
+                }, 12000);
             });
 
             valEl.innerText = speedMbps;
@@ -556,6 +567,10 @@
 
             labelEl.innerText = "انقر لإعادة الاختبار";
             valEl.innerText = "GO";
+        }
+
+        function logout() {
+            location.reload();
         }
     </script>
 </body>
