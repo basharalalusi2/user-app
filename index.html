@@ -21,7 +21,7 @@
         .role-btn { flex: 1; padding: 10px; border: none; border-radius: 8px; background: transparent; color: #555; font-size: 15px; font-weight: bold; font-family: 'Tajawal', sans-serif; cursor: pointer; transition: 0.3s; }
         .role-btn.active { background-color: #7b2cbf; color: white; box-shadow: 0 2px 8px rgba(123,44,191,0.3); }
 
-        input { width: 100%; padding: 12px 15px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 10px; background-color: #f9f9f9; color: #333; font-size: 15px; font-family: 'Tajawal', sans-serif; box-sizing: border-box; outline: none; transition: 0.3s; }
+        input, select { width: 100%; padding: 12px 15px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 10px; background-color: #f9f9f9; color: #333; font-size: 15px; font-family: 'Tajawal', sans-serif; box-sizing: border-box; outline: none; transition: 0.3s; }
         input:focus { border-color: #7b2cbf; background-color: #fff; }
 
         .btn-submit { width: 100%; padding: 13px; background-color: #7b2cbf; color: white; border: none; border-radius: 10px; font-size: 17px; font-weight: bold; font-family: 'Tajawal', sans-serif; cursor: pointer; transition: 0.3s; margin-top: 5px; }
@@ -29,7 +29,7 @@
         
         #messageBox { margin-top: 15px; font-weight: bold; font-size: 14px; display: none; }
 
-        /* لوحة تحكم الإدارة */
+        /* لوحة تحكم الإدارة الكاملة */
         .admin-full-box { display: none; width: 95%; max-width: 900px; background-color: #4d0085; padding: 25px 15px; border-radius: 15px; margin-top: 20px; box-sizing: border-box; }
         .dashboard-cards { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 20px; margin-bottom: 20px; justify-content: center; }
         .dash-card { flex: 1 1 150px; padding: 20px 10px; border-radius: 8px; text-align: center; color: white; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
@@ -65,4 +65,346 @@
 
         #userPanel { display: none; width: 92%; max-width: 500px; background-color: #4d0085; padding: 25px; border-radius: 15px; margin-top: 20px; color: white; box-sizing: border-box; }
         .result-item { margin-bottom: 10px; font-size: 16px; }
-        .btn-red { background-color: #dc3545; color: white; border: none; padding
+        .btn-red { background-color: #dc3545; color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <!-- قسم تسجيل الدخول الأساسي -->
+    <div class="container" id="loginContainer">
+        <h2>بشار الالوسي لخدمات الانترنت</h2>
+        <p class="subtitle" id="loginSubtitle">دخول المشترك — أدخل يوزرك وكلمة السر</p>
+        
+        <div class="role-switch">
+            <button type="button" class="role-btn active" id="btnUserRole" onclick="setRole('user')">👤 مشترك</button>
+            <button type="button" class="role-btn" id="btnAdminRole" onclick="setRole('admin')">🛠️ مدير</button>
+        </div>
+
+        <input type="text" id="username" placeholder="اسم المستخدم (اليوزر)">
+        <input type="password" id="password" placeholder="كلمة المرور (الباسورد)">
+        <button class="btn-submit" onclick="login()">دخول</button>
+        
+        <div id="messageBox"></div>
+    </div>
+
+    <!-- واجهة المشترك -->
+    <div id="userPanel" class="result-box">
+        <h3 style="text-align: center; color: #d1a3ff; margin-top:0;">بيانات الاشتراك</h3>
+        <div class="result-item">🟢 حالة الاشتراك: <span id="resStatus" style="font-weight: bold;"></span></div>
+        <div class="result-item">📱 رقم الهاتف: <span id="resPhone"></span></div>
+        <div class="result-item">🚀 تاريخ التفعيل: <span id="resStart"></span></div>
+        <div class="result-item">📅 تاريخ الانتهاء: <span id="resExp"></span></div>
+        <div class="result-item">💰 الديون: <span id="resDebt"></span> دينار</div>
+        
+        <!-- متجر الأجهزة -->
+        <div class="store-section">
+            <div class="store-title">🛒 متجر الأجهزة والخدمات المتاحة</div>
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-icon">🌐</div>
+                    <h3>راوترات (TP-Link, Tenda)</h3>
+                    <p>راوترات منزلية وأنظمة تغطية كاملة</p>
+                    <div class="product-price">متوفرة عدة موديلات</div>
+                    <a class="btn-buy" href="https://wa.me/9647814122720?text=مرحباً، أريـد الاستفسار عن الراوترات" target="_blank">طلب عبر الواتساب</a>
+                </div>
+                <div class="product-card">
+                    <div class="product-icon">📡</div>
+                    <h3>صحن لايت بيم / باور بيم</h3>
+                    <p>أجهزة بث واستقبال لاسلكي</p>
+                    <div class="product-price">تواصل لمعرفة السعر</div>
+                    <a class="btn-buy" href="https://wa.me/9647814122720?text=مرحباً، أريـد الاستفسار عن الصحون" target="_blank">طلب عبر الواتساب</a>
+                </div>
+                <div class="product-card">
+                    <div class="product-icon">🔋</div>
+                    <h3>يوبي إس (Mini UPS)</h3>
+                    <p>يبقي الإنترنت شغالاً عند انقطاع الكهرباء</p>
+                    <div class="product-price">متوفر بقوات مختلفة</div>
+                    <a class="btn-buy" href="https://wa.me/9647814122720?text=مرحباً، أريـد الاستفسار عن Mini UPS" target="_blank">طلب عبر الواتساب</a>
+                </div>
+                <div class="product-card">
+                    <div class="product-icon">📷</div>
+                    <h3>كاميرات مراقبة</h3>
+                    <p>أنظمة حماية أمنية متكاملة للمنازل</p>
+                    <div class="product-price">عروض خاصة</div>
+                    <a class="btn-buy" href="https://wa.me/9647814122720?text=مرحباً، أريـد الاستفسار عن كاميرات المراقبة" target="_blank">طلب عبر الواتساب</a>
+                </div>
+            </div>
+        </div>
+        <button class="btn-red" onclick="logout()">تسجيل خروج</button>
+    </div>
+
+    <!-- لوحة تحكم المدير الكاملة -->
+    <div id="adminPanel" class="admin-full-box">
+        <h3 style="text-align: center; color: #00ff88; margin-top:0;">لوحة تحكم الإدارة</h3>
+        <div style="max-width:400px; margin:auto;">
+            <input type="text" id="add_user" placeholder="يوزر المشترك (للاضافة او التعديل)">
+            <input type="text" id="add_pass" placeholder="باسورد المشترك">
+            <input type="text" id="add_phone" placeholder="رقم الهاتف">
+            <label style="color:white; font-size:13px; display:block; text-align:right; margin-bottom:5px;">تاريخ التفعيل:</label>
+            <input type="date" id="add_start">
+            <label style="color:white; font-size:13px; display:block; text-align:right; margin-bottom:5px;">تاريخ الانتهاء:</label>
+            <input type="date" id="add_exp">
+            <input type="number" id="add_debt" placeholder="الديون (مثال: 0 أو 5000)">
+            <select id="add_status" style="width:100%; padding:12px; margin-bottom:12px; border-radius:10px;">
+                <option value="متصل">متصل</option>
+                <option value="غير متصل">غير متصل</option>
+            </select>
+            <button class="btn-submit" style="background-color: #28a745;" onclick="addNewUser()">حفظ / تعديل بيانات المشترك</button>
+        </div>
+        
+        <!-- بطاقات إحصائيات SAS -->
+        <div class="dashboard-cards" id="dashCards">
+            <div class="dash-card card-total"><h4>TOTAL USERS<br>المشتركين</h4><p id="statTotal">0</p></div>
+            <div class="dash-card card-active"><h4>ACTIVE USERS<br>الفعالين</h4><p id="statActive">0</p></div>
+            <div class="dash-card card-expiring"><h4>ABOUT TO EXPIRE<br>ينتهي قريباً</h4><p id="statExpiring">0</p></div>
+            <div class="dash-card card-expired"><h4>EXPIRED USERS<br>المنتهين</h4><p id="statExpired">0</p></div>
+            <div class="dash-card card-debt"><h4>BALANCE<br>إجمالي الديون</h4><p id="statDebt">0 IQD</p></div>
+        </div>
+
+        <div class="table-container" id="usersTableContainer">
+            <table id="usersTable">
+                <thead>
+                    <tr>
+                        <th>اليوزر</th>
+                        <th>الهاتف</th>
+                        <th>التفعيل</th>
+                        <th>الانتهاء</th>
+                        <th>الديون</th>
+                        <th>الحالة</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody"></tbody>
+            </table>
+        </div>
+
+        <button class="btn-red" style="max-width:400px; display:block; margin:25px auto 0;" onclick="logout()">تسجيل خروج</button>
+    </div>
+
+    <script>
+        const API_URL = 'https://basharalalusi.onrender.com';
+        let currentRole = 'user';
+
+        function setRole(role) {
+            currentRole = role;
+            const sub = document.getElementById('loginSubtitle');
+            const userField = document.getElementById('username');
+            const passField = document.getElementById('password');
+            
+            if(role === 'user') {
+                document.getElementById('btnUserRole').classList.add('active');
+                document.getElementById('btnAdminRole').classList.remove('active');
+                sub.innerText = "دخول المشترك — أدخل يوزرك وكلمة السر";
+                userField.placeholder = "اسم المستخدم (اليوزر)";
+            } else {
+                document.getElementById('btnAdminRole').classList.add('active');
+                document.getElementById('btnUserRole').classList.remove('active');
+                sub.innerText = "دخول المدير — أدخل بيانات الإدارة";
+                userField.placeholder = "يوزر المدير (مثل: bashar@dsc)";
+            }
+        }
+
+        async function login() {
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
+            const msgBox = document.getElementById('messageBox');
+            msgBox.style.display = 'block'; 
+            msgBox.style.color = '#7b2cbf'; 
+            msgBox.innerText = 'جاري التحقق والاتصال بالسيرفر...';
+
+            if(!user || !pass) {
+                msgBox.style.color = '#dc3545';
+                msgBox.innerText = '❌ يرجى ادخال اليوزر وكلمة المرور';
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/login-subscriber`, {
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: user, password: pass })
+                });
+                const data = await res.json();
+
+                if (res.ok && data.status === "success") {
+                    document.getElementById('loginContainer').style.display = 'none';
+                    msgBox.style.display = 'none';
+
+                    if (data.role === "admin") {
+                        document.getElementById('adminPanel').style.display = 'block';
+                        loadAllUsers();
+                    } else {
+                        document.getElementById('resStatus').innerText = data.status_active ? "متصل" : "غير متصل";
+                        document.getElementById('resStatus').style.color = data.status_active ? "#00ff88" : "#ffcccc";
+                        document.getElementById('resPhone').innerText = data.phone;
+                        document.getElementById('resStart').innerText = data.start_date;
+                        document.getElementById('resExp').innerText = data.expiration;
+                        document.getElementById('resDebt').innerText = data.debt;
+                        document.getElementById('userPanel').style.display = 'block';
+                    }
+                } else {
+                    msgBox.style.color = '#dc3545'; 
+                    msgBox.innerText = data.error || 'خطأ في بيانات الدخول';
+                }
+            } catch (err) {
+                msgBox.style.color = '#dc3545'; 
+                msgBox.innerText = '⚠️ تعذر الاتصال بالسيرفر. (قد يكون السيرفر في وضع السكون، يرجى المحاولة بعد ثوانٍ)';
+            }
+        }
+
+        // تفعيل زر Enter لتسجيل الدخول مباشرة
+        document.getElementById('username').addEventListener('keypress', function(e) { if (e.key === 'Enter') { login(); } });
+        document.getElementById('password').addEventListener('keypress', function(e) { if (e.key === 'Enter') { login(); } });
+
+        async function addNewUser() {
+            const userData = {
+                admin_user: document.getElementById('username').value,
+                admin_pass: document.getElementById('password').value,
+                username: document.getElementById('add_user').value,
+                password: document.getElementById('add_pass').value,
+                phone: document.getElementById('add_phone').value,
+                start_date: document.getElementById('add_start').value,
+                exp_date: document.getElementById('add_exp').value,
+                debt: document.getElementById('add_debt').value || 0,
+                status: document.getElementById('add_status').value
+            };
+
+            if(!userData.username || !userData.password) {
+                alert('❌ الرجاء كتابة يوزر وباسورد للمشترك!');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/add_user`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+                const data = await res.json();
+                
+                if (res.ok) {
+                    alert('✅ ' + data.message);
+                    document.getElementById('add_user').value = ''; 
+                    document.getElementById('add_pass').value = '';
+                    document.getElementById('add_phone').value = ''; 
+                    document.getElementById('add_debt').value = '';
+                    loadAllUsers();
+                } else {
+                    alert('❌ ' + data.error);
+                }
+            } catch (err) {
+                alert('حدث خطأ أثناء الاتصال.');
+            }
+        }
+
+        async function loadAllUsers() {
+            const adminUser = document.getElementById('username').value;
+            const adminPass = document.getElementById('password').value;
+            
+            try {
+                const res = await fetch(`${API_URL}/get_all_users`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ admin_user: adminUser, admin_pass: adminPass })
+                });
+                const data = await res.json();
+                
+                if (res.ok && data.status === "success") {
+                    const tbody = document.getElementById('usersTableBody');
+                    tbody.innerHTML = ''; 
+
+                    const today = new Date();
+                    today.setHours(0,0,0,0);
+
+                    let totalUsers = data.users.length;
+                    let activeUsers = 0;
+                    let expiredUsers = 0;
+                    let expiringSoon = 0;
+                    let totalDebtAmount = 0;
+
+                    data.users.forEach(u => {
+                        const expDate = new Date(u.exp_date);
+                        const diffTime = expDate - today;
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                        totalDebtAmount += parseInt(u.debt) || 0;
+
+                        let dateColor = "blue"; 
+                        if (diffDays < 0) {
+                            dateColor = "red"; 
+                            expiredUsers++; 
+                        } else if (diffDays >= 0 && diffDays <= 3) {
+                            dateColor = "orange"; 
+                            expiringSoon++; 
+                            activeUsers++; 
+                        } else {
+                            activeUsers++; 
+                        }
+
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${u.username}</td>
+                            <td style="direction:ltr;">${u.phone}</td>
+                            <td>${u.start_date}</td>
+                            <td style="color: ${dateColor}; font-weight: bold;">${u.exp_date}</td>
+                            <td style="color:red; font-weight:bold;">${u.debt}</td>
+                            <td style="color: ${u.status === 'متصل' ? 'green' : 'gray'}; font-weight:bold;">${u.status}</td>
+                            <td>
+                                <button class="btn-action btn-edit" onclick="editUser('${u.username}', '${u.password}', '${u.phone}', '${u.start_date}', '${u.exp_date}', '${u.debt}', '${u.status}')">تعديل</button>
+                                <button class="btn-action btn-wa" onclick="sendWhatsApp('${u.phone}', '${u.debt}')">واتساب</button>
+                                <button class="btn-action btn-del" onclick="deleteUser('${u.username}')">حذف</button>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+
+                    document.getElementById('statTotal').innerText = totalUsers;
+                    document.getElementById('statActive').innerText = activeUsers;
+                    document.getElementById('statExpiring').innerText = expiringSoon;
+                    document.getElementById('statExpired').innerText = expiredUsers;
+                    document.getElementById('statDebt').innerText = totalDebtAmount.toLocaleString('en-US') + " IQD";
+                }
+            } catch (err) {
+                console.error("خطأ في جلب بيانات الجدول");
+            }
+        }
+
+        function editUser(user, pass, phone, start, exp, debt, status) {
+            document.getElementById('add_user').value = user;
+            document.getElementById('add_pass').value = pass;
+            document.getElementById('add_phone').value = phone;
+            document.getElementById('add_start').value = start;
+            document.getElementById('add_exp').value = exp;
+            document.getElementById('add_debt').value = debt;
+            document.getElementById('add_status').value = status;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function deleteUser(userToDelete) {
+            if(!confirm(`هل أنت متأكد من حذف المشترك: ${userToDelete} ؟`)) return;
+            const adminUser = document.getElementById('username').value;
+            const adminPass = document.getElementById('password').value;
+            try {
+                const res = await fetch(`${API_URL}/delete_user`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ admin_user: adminUser, admin_pass: adminPass, username: userToDelete })
+                });
+                if(res.ok) loadAllUsers();
+            } catch (err) {
+                alert("حدث خطأ أثناء الحذف");
+            }
+        }
+
+        function sendWhatsApp(phone, debt) {
+            let formattedPhone = phone;
+            if(formattedPhone.startsWith('0')) {
+                formattedPhone = "964" + formattedPhone.substring(1);
+            }
+            const msg = `تحية طيبة\nنود اعلامكم بأن اشتراككم بخدمة الانترنت بشار الالوسي شارف على الانتهاء للاستمرار بالتمتع بخدماتنا يرجى تجديد الاشتراك من خلال التواصل معنا مباشرة\nزيارة مكتبنا\nاو عبر الماستر كارد او الزين كاش\nرقم الماستر 7116570545\nزين كاش 07814122720\nشكرا لتفهمكم\n\nطلبك الحالي: ${debt} دينار`;
+            window.open(`https://wa.me/${formattedPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function logout() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>
