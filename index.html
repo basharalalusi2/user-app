@@ -252,6 +252,14 @@
             }
         }
 
+        // تفعيل زر Enter لتسجيل الدخول تلقائياً
+        document.getElementById('username').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') { login(); }
+        });
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') { login(); }
+        });
+
         async function addNewUser() {
             const msgBox = document.getElementById('messageBox');
             msgBox.style.display = 'block'; msgBox.style.color = '#d1a3ff'; msgBox.innerText = 'جاري الحفظ...';
@@ -371,7 +379,7 @@
             document.getElementById('add_user').value = user;
             document.getElementById('add_pass').value = pass;
             document.getElementById('add_phone').value = phone;
-            document.getElementById('add_start').value = start;
+            document.getElementById('add_start').value, start;
             document.getElementById('add_exp').value = exp;
             document.getElementById('add_debt').value = debt;
             document.getElementById('add_status').value = status;
