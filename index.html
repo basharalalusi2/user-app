@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>بشار الالوسي لخدمات الانترنت — لوحة التحكم</title>
-<!-- Firebase -->
+<!-- Firebase (التخزين السحابي + تسجيل الدخول بالإيميل) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -36,15 +36,10 @@ input,select{font-family:inherit}
 .auth-card input:focus{outline:none;border-color:var(--primary)}
 .btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-d));color:#fff;
   width:100%;padding:14px;font-size:16px;font-weight:700;margin-top:6px}
-.btn-link{background:none;color:var(--primary);font-size:13px;margin-top:14px;text-decoration:underline;display:block;width:100%}
+.btn-link{background:none;color:var(--primary);font-size:13px;margin-top:14px;text-decoration:underline}
 .auth-err{color:var(--red);font-size:13px;min-height:18px;margin-top:8px}
 
-/* ===== تبويبات الدخول ===== */
-.tabs{display:flex;gap:8px;margin-bottom:18px}
-.tab{flex:1;padding:11px;border-radius:10px;background:#f3f4f6;color:#6b7280;font-weight:700;font-size:14px;transition:.2s}
-.tab.on{background:linear-gradient(135deg,var(--primary),var(--primary-d));color:#fff}
-
-/* ===== الهيدر وباقي العناصر ===== */
+/* ===== الهيدر ===== */
 .topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
   background:rgba(255,255,255,.08);backdrop-filter:blur(8px);border-radius:var(--radius);
   padding:16px 22px;margin-bottom:18px;color:#fff}
@@ -53,7 +48,9 @@ input,select{font-family:inherit}
 .topbar-actions{display:flex;gap:8px;flex-wrap:wrap}
 .chip{background:rgba(255,255,255,.15);color:#fff;padding:9px 14px;font-size:13px;font-weight:600}
 .chip.red{background:var(--red)}
-
+</style>
+<style>
+/* ===== النموذج ===== */
 .panel{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;margin-bottom:18px}
 .panel h2{font-size:16px;color:var(--primary-d);margin-bottom:16px;display:flex;align-items:center;gap:8px}
 .grid-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
@@ -66,6 +63,7 @@ input,select{font-family:inherit}
   padding:14px 20px;font-size:15px;font-weight:700;width:100%;margin-top:16px}
 .btn-cancel-edit{background:#e5e7eb;color:#374151;padding:14px 20px;font-weight:700;margin-top:16px}
 
+/* ===== بطاقات الإحصاء ===== */
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:18px}
 .stat{border-radius:var(--radius);padding:20px;color:#fff;cursor:pointer;position:relative;
   box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s;user-select:none}
@@ -83,6 +81,7 @@ input,select{font-family:inherit}
 .balance .lbl2{font-size:13px;opacity:.8;letter-spacing:2px}
 .balance .big{font-size:30px;font-weight:800}
 
+/* ===== الجدول ===== */
 .table-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px}
 .search-box{padding:10px 14px;border:2px solid #e5e7eb;border-radius:10px;font-size:14px;min-width:220px}
 .filter-note{font-size:13px;color:var(--primary-d);font-weight:600}
@@ -104,17 +103,25 @@ tr.row-click:hover{background:#faf5ff}
 .ibtn.del{background:var(--red)}
 .empty{text-align:center;padding:30px;color:var(--muted)}
 
+/* ===== النوافذ المنبثقة ===== */
 .overlay{position:fixed;inset:0;background:rgba(15,12,41,.6);backdrop-filter:blur(3px);
   display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
 .modal{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);width:100%;
   max-width:520px;max-height:90vh;overflow:auto;padding:24px}
 .modal h3{color:var(--primary-d);font-size:17px;margin-bottom:16px;display:flex;justify-content:space-between}
 .modal .x{background:#f3f4f6;width:32px;height:32px;border-radius:8px;font-size:16px}
+.btn-logout{background:var(--red);color:#fff;padding:14px;font-size:15px;font-weight:700;width:100%;margin-top:4px}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111827;color:#fff;
   padding:13px 22px;border-radius:12px;font-size:14px;z-index:99;opacity:0;transition:.3s;pointer-events:none}
 .toast.show{opacity:1}
+@media(max-width:600px){.stat .num{font-size:28px}.balance{flex-direction:column;gap:8px;text-align:center}}
 
-/* بورتال المشترك والمتجر */
+/* ===== تبويبات الدخول ===== */
+.tabs{display:flex;gap:8px;margin-bottom:18px}
+.tab{flex:1;padding:11px;border-radius:10px;background:#f3f4f6;color:#6b7280;font-weight:700;font-size:14px}
+.tab.on{background:linear-gradient(135deg,var(--primary),var(--primary-d));color:#fff}
+
+/* ===== بورتال المشترك ===== */
 .sub-hero{background:linear-gradient(135deg,#1e3a8a,#312e81);color:#fff;border-radius:var(--radius);
   padding:26px;box-shadow:var(--shadow);margin-bottom:18px;text-align:center}
 .sub-hero .hi{font-size:14px;opacity:.85}
@@ -130,14 +137,17 @@ tr.row-click:hover{background:#faf5ff}
 .info-card .t{font-size:12px;color:var(--muted);margin:6px 0 2px}
 .info-card .v{font-size:16px;font-weight:800;color:var(--ink)}
 .sub-status{display:inline-block;padding:6px 16px;border-radius:999px;color:#fff;font-weight:700;font-size:14px}
+
+/* ===== المتجر ===== */
 .store-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px}
 .prod{background:#fff;border-radius:14px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
 .prod img{width:100%;height:130px;object-fit:cover;background:#eee}
+.prod .no-img{height:130px;display:flex;align-items:center;justify-content:center;font-size:40px;background:#f3f4f6}
 .prod .body{padding:12px;flex:1;display:flex;flex-direction:column}
 .prod .pname{font-weight:800;font-size:15px;color:var(--ink)}
 .prod .pdesc{font-size:12px;color:var(--muted);margin:4px 0;flex:1}
 .prod .pprice{font-weight:800;color:var(--green-d);font-size:16px}
-.prod .pbuy{background:#25d366;color:#fff;padding:9px;font-weight:700;margin-top:8px;border-radius:9px;font-size:13px;text-align:center;text-decoration:none;display:block}
+.prod .pbuy{background:#25d366;color:#fff;padding:9px;font-weight:700;margin-top:8px;border-radius:9px;font-size:13px}
 .prod-admin{display:flex;gap:6px;padding:0 12px 12px}
 .prod-admin button{flex:1;padding:7px;font-size:12px;font-weight:700;color:#fff;border-radius:8px}
 .cat-bar{display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;margin-bottom:14px;flex-wrap:wrap}
@@ -176,28 +186,26 @@ tr.row-click:hover{background:#faf5ff}
   <div class="auth-card">
     <h1>بشار الالوسي لخدمات الانترنت</h1>
     <p id="authSub">دخول المشترك — أدخل يوزرك وكلمة السر</p>
-    
     <div class="tabs">
-      <button class="tab on" id="tabSub" type="button">👤 مشترك</button>
-      <button class="tab" id="tabAdmin" type="button">🛠️ مدير</button>
+      <button class="tab on" id="tabSub">👤 مشترك</button>
+      <button class="tab" id="tabAdmin">🛠️ مدير</button>
     </div>
 
     <!-- دخول المشترك -->
     <div id="subLogin">
       <input id="subUser" placeholder="اليوزر (مثال: 22)" autocomplete="username">
       <input id="subPass" type="password" placeholder="الباسورد" autocomplete="current-password">
-      <button class="btn-primary" id="btnSubLogin" type="button">دخول</button>
+      <button class="btn-primary" id="btnSubLogin">دخول</button>
     </div>
 
     <!-- دخول المدير -->
     <div id="adminLogin" class="hidden">
-      <input id="loginEmail" type="email" placeholder="البريد الإلكتروني (المدير)" autocomplete="username">
+      <input id="loginEmail" type="email" placeholder="البريد الإلكتروني" autocomplete="username">
       <input id="loginPass" type="password" placeholder="كلمة السر" autocomplete="current-password">
-      <button class="btn-primary" id="btnLogin" type="button">دخول الإدارة</button>
-      <button class="btn-link" id="btnShowSignup" type="button">لا تملك حسابًا؟ أنشئ حساب مدير</button>
-      <button class="btn-link" id="btnReset" type="button">نسيت كلمة السر؟</button>
+      <button class="btn-primary" id="btnLogin">دخول الإدارة</button>
+      <button class="btn-link" id="btnShowSignup">لا تملك حسابًا؟ أنشئ حساب مدير</button>
+      <button class="btn-link" id="btnReset">نسيت كلمة السر؟</button>
     </div>
-    
     <div class="auth-err" id="authErr"></div>
   </div>
 </div>
@@ -232,7 +240,7 @@ tr.row-click:hover{background:#faf5ff}
   <!-- فحص السرعة -->
   <div class="panel speedtest">
     <h2>⚡ فحص سرعة الإنترنت</h2>
-    <div style="font-size:12px;color:var(--muted);margin:-8px 0 14px">القياس الفعلي يتم عبر أقرب خادم عالمي <b id="spdServer">Cloudflare</b></div>
+    <div style="font-size:12px;color:var(--muted);margin:-8px 0 14px">القياس الفعلي يتم عبر أقرب خادم عالمي <b id="spdServer">Cloudflare</b> — سرعة حقيقية وزمن استجابة حقيقي</div>
     <div class="spd-wrap">
       <div class="spd-gauge" id="spdGauge">
         <div class="spd-num" id="spdNum">0</div>
@@ -289,7 +297,7 @@ tr.row-click:hover{background:#faf5ff}
     </div>
   </div>
 
-  <!-- بطاقات الإحصاء -->
+  <!-- بطاقات الإحصاء (قابلة للضغط) -->
   <div class="stats">
     <div class="stat red" data-filter="expired"><div class="num" id="cExpired">0</div><div class="lbl">المنتهين</div><div class="hint">اضغط لعرضهم</div></div>
     <div class="stat yellow" data-filter="soon"><div class="num" id="cSoon">0</div><div class="lbl">ينتهي قريبًا</div><div class="hint">اضغط لعرضهم</div></div>
@@ -298,7 +306,7 @@ tr.row-click:hover{background:#faf5ff}
     <div class="stat balance"><div><div class="lbl2">BALANCE</div><div class="lbl">إجمالي الديون</div></div><div class="big" id="cDebt">IQD 0</div></div>
   </div>
 
-  <!-- تذكيرات التجديد -->
+  <!-- تذكيرات التجديد (قبل يومين من الانتهاء) -->
   <div class="panel" id="reminderPanel">
     <div class="table-head">
       <h2 style="margin:0">🔔 تذكيرات التجديد <span class="filter-note">— ينتهي خلال يومين</span></h2>
@@ -336,7 +344,7 @@ tr.row-click:hover{background:#faf5ff}
     </div>
     <div class="cat-bar" id="adminCats"></div>
     <div class="store-grid" id="adminStore"></div>
-    <div class="empty hidden" id="adminStoreEmpty">المتجر يعرض الكتالوج الجاهز تلقائيًا.</div>
+    <div class="empty hidden" id="adminStoreEmpty">المتجر يعرض الآن الكتالوج الجاهز تلقائيًا. اضغط «تعبئة الكتالوج» لتعديل الأسعار، أو «إضافة منتج».</div>
   </div>
 </div>
 
@@ -345,12 +353,12 @@ tr.row-click:hover{background:#faf5ff}
   <div class="modal">
     <h3><span id="prodModalTitle">إضافة عرض</span><button class="x" data-close="prodModal">✕</button></h3>
     <div class="grid-form">
-      <div class="field" style="grid-column:1/-1"><label>اسم المنتج</label><input id="pName" placeholder="مثال: كاميرا مراقبة"></div>
+      <div class="field" style="grid-column:1/-1"><label>اسم المنتج</label><input id="pName" placeholder="مثال: كاميرا مراقبة خارجية 4MP"></div>
       <div class="field"><label>القسم</label><select id="pCat"></select></div>
       <div class="field"><label>الأيقونة (إيموجي)</label><input id="pIcon" placeholder="📷" maxlength="4"></div>
-      <div class="field"><label>السعر (IQD)</label><input id="pPrice" type="number" placeholder="55000"></div>
+      <div class="field"><label>السعر (IQD) — 0 = اتصل للسعر</label><input id="pPrice" type="number" placeholder="55000"></div>
       <div class="field"><label>رابط صورة (اختياري)</label><input id="pImg" placeholder="https://..."></div>
-      <div class="field" style="grid-column:1/-1"><label>الوصف</label><textarea id="pDesc" placeholder="تفاصيل..."></textarea></div>
+      <div class="field" style="grid-column:1/-1"><label>الوصف</label><textarea id="pDesc" placeholder="تفاصيل المنتج..."></textarea></div>
     </div>
     <input type="hidden" id="pId">
     <button class="btn-save" id="btnSaveProduct">حفظ العرض</button>
@@ -380,7 +388,7 @@ tr.row-click:hover{background:#faf5ff}
   </div>
 </div>
 
-<!-- ===== نافذة الإعدادات ===== -->
+<!-- ===== نافذة الإعدادات وتغيير كلمة السر ===== -->
 <div id="settingsModal" class="overlay hidden">
   <div class="modal">
     <h3><span>⚙️ إعدادات لوحة التحكم</span><button class="x" data-close="settingsModal">✕</button></h3>
@@ -402,14 +410,38 @@ tr.row-click:hover{background:#faf5ff}
 <div class="toast" id="toast"></div>
 
 <script>
-const firebaseConfig = { apiKey: "", authDomain: "", projectId: "", storageBucket: "", messagingSenderId: "", appId: "" };
+/* =====================================================================
+   إعدادات Firebase (تخزين سحابي دائم + تسجيل دخول بالإيميل)
+   --------------------------------------------------------------------
+   لتفعيل التخزين السحابي الدائم وربط الحساب بالبريد الإلكتروني:
+   1) افتح https://console.firebase.google.com وأنشئ مشروعًا مجانيًا.
+   2) من Build > Authentication فعّل Email/Password.
+   3) من Build > Firestore Database أنشئ قاعدة بيانات (Start in production).
+   4) من Project settings > Your apps (Web) انسخ قيم firebaseConfig
+      وضعها بدل القيم الفارغة أدناه.
+   → إذا تركت apiKey فارغًا: يعمل التطبيق بالتخزين المحلي (localStorage)
+     على نفس الجهاز فقط دون مزامنة بين الأجهزة.
+   ===================================================================== */
+const firebaseConfig = {
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: ""
+};
+
 let useCloud = !!firebaseConfig.apiKey;
 let auth=null, db=null;
 if(useCloud){
-  try{ firebase.initializeApp(firebaseConfig); auth = firebase.auth(); db = firebase.firestore(); }
-  catch(e){ useCloud=false; }
+  try{
+    firebase.initializeApp(firebaseConfig);
+    auth = firebase.auth();
+    db = firebase.firestore();
+  }catch(e){ console.warn('Firebase init failed, fallback to local', e); useCloud=false; }
 }
 
+/* ===== أدوات مساعدة ===== */
 const $ = id => document.getElementById(id);
 const toastEl = $('toast');
 function toast(msg){ toastEl.textContent=msg; toastEl.classList.add('show');
@@ -417,10 +449,12 @@ function toast(msg){ toastEl.textContent=msg; toastEl.classList.add('show');
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function fmtNum(n){ return Number(n||0).toLocaleString('en-US'); }
 
-let SUBS = [];            
+/* ===== حالة التطبيق ===== */
+let SUBS = [];            // قائمة المشتركين
 let currentFilter = 'all';
 let currentEmail = '';
 
+/* ===== حساب الحالة حسب تاريخ الانتهاء ===== */
 function statusOf(sub){
   if(!sub.end) return 'active';
   const today = new Date(); today.setHours(0,0,0,0);
@@ -433,6 +467,9 @@ function statusOf(sub){
 const STATUS_AR = {expired:'منتهي', soon:'ينتهي قريبًا', active:'فعّال'};
 const STATUS_CLS = {expired:'red', soon:'yellow', active:'green'};
 
+/* =====================================================================
+   طبقة التخزين (سحابي أو محلي)
+   ===================================================================== */
 const LKEY = 'bashar_subs_v1';
 function loadLocal(){ try{ return JSON.parse(localStorage.getItem(LKEY)||'[]'); }catch(e){ return []; } }
 function saveLocal(){ localStorage.setItem(LKEY, JSON.stringify(SUBS)); }
@@ -455,21 +492,21 @@ function watchData(){
     db.collection('subscribers').onSnapshot(snap=>{
       SUBS = snap.docs.map(d=>({id:d.id, ...d.data()}));
       renderAll();
-    }, err=>{ console.error(err); });
+    }, err=>{ console.error(err); toast('تعذر جلب البيانات من السحابة'); });
   }else{
     SUBS = loadLocal(); renderAll();
   }
 }
 
+/* =====================================================================
+   المصادقة (تسجيل الدخول بالإيميل)
+   ===================================================================== */
 const LOCAL_ADMIN = 'bashar_admin_v1';
-const SESSION_KEY = 'bashar_session_v1';
-
 function getLocalAdmin(){ try{ return JSON.parse(localStorage.getItem(LOCAL_ADMIN)||'null'); }catch(e){ return null; } }
 function setLocalAdmin(o){ localStorage.setItem(LOCAL_ADMIN, JSON.stringify(o)); }
 
 function showApp(email){
   currentEmail = email;
-  localStorage.setItem(SESSION_KEY, JSON.stringify({type: 'admin', email}));
   $('authView').classList.add('hidden');
   $('subView').classList.add('hidden');
   $('appView').classList.remove('hidden');
@@ -478,18 +515,7 @@ function showApp(email){
   watchData();
   watchProducts();
 }
-
-function showSubPortal(subData){
-  localStorage.setItem(SESSION_KEY, JSON.stringify({type: 'sub', user: subData}));
-  $('authView').classList.add('hidden');
-  $('appView').classList.add('hidden');
-  $('subView').classList.remove('hidden');
-  renderSubView(subData);
-  watchProducts();
-}
-
 function showAuth(){
-  localStorage.removeItem(SESSION_KEY);
   $('appView').classList.add('hidden');
   $('subView').classList.add('hidden');
   $('authView').classList.remove('hidden');
@@ -505,7 +531,7 @@ async function doLogin(){
     catch(e){ err.textContent = authErrAr(e); }
   }else{
     let admin = getLocalAdmin();
-    if(!admin){ 
+    if(!admin){ // أول دخول: أنشئ حساب المدير تلقائيًا
       setLocalAdmin({email, pass}); showApp(email); toast('تم إنشاء حساب المدير'); return; }
     if(admin.email===email && admin.pass===pass){ showApp(email); }
     else err.textContent='بيانات الدخول غير صحيحة';
@@ -531,7 +557,7 @@ async function doReset(){
     try{ await auth.sendPasswordResetEmail(email); toast('تم إرسال رابط استرجاع إلى بريدك'); }
     catch(e){ err.textContent = authErrAr(e); }
   }else{
-    err.textContent='استرجاع كلمة السر متوفر فقط عند تفعيل السحابة';
+    err.textContent='استرجاع كلمة السر بالبريد متوفر فقط عند تفعيل التخزين السحابي';
   }
 }
 function authErrAr(e){
@@ -539,6 +565,9 @@ function authErrAr(e){
   return m[e.code] || ('خطأ: '+(e.message||e.code));
 }
 
+/* =====================================================================
+   العرض: البطاقات + الجدول
+   ===================================================================== */
 function renderStats(){
   let ex=0, so=0, ac=0, debt=0;
   SUBS.forEach(s=>{ const st=statusOf(s);
@@ -573,28 +602,32 @@ function renderTable(){
       '<td>'+fmtNum(s.debt)+'</td>'+
       '<td><span class="badge '+STATUS_CLS[st]+'">'+STATUS_AR[st]+'</span></td>'+
       '<td><span class="act">'+
-        '<button class="ibtn edit" data-act="edit" type="button" title="تعديل">✎</button>'+
-        '<button class="ibtn wa" data-act="wa" type="button" title="واتساب">💬</button>'+
-        '<button class="ibtn del" data-act="del" type="button" title="حذف">🗑</button>'+
+        '<button class="ibtn edit" data-act="edit" title="تعديل">✎</button>'+
+        '<button class="ibtn wa" data-act="wa" title="واتساب">💬</button>'+
+        '<button class="ibtn del" data-act="del" title="حذف">🗑</button>'+
       '</span></td>';
     tb.appendChild(tr);
   });
 }
 function renderAll(){ renderStats(); renderTable(); renderReminders(); }
 
+/* =====================================================================
+   تذكيرات التجديد (قبل يومين من الانتهاء)
+   ===================================================================== */
 function daysLeft(sub){
   if(!sub.end) return null;
   const t=new Date(); t.setHours(0,0,0,0);
   const e=new Date(sub.end); e.setHours(0,0,0,0);
   return Math.round((e-t)/86400000);
 }
+// المستحقون للتذكير: ينتهي خلال يومين (0،1،2 يوم)
 function dueReminders(){
   return SUBS.filter(s=>{ const d=daysLeft(s); return d!==null && d>=0 && d<=2; })
              .sort((a,b)=> daysLeft(a)-daysLeft(b));
 }
 function reminderMsg(sub){
   const debt = fmtNum(sub.debt||0);
-  return 'تحية طيبة، نود اعلامكم بأن اشتراككم بشارف على الانتهاء. يرجى التجديد. الطلب الحالي: '+debt+' دينار';
+  return 'تحية طيبة نود اعلامكم بأن اشتراككم بخدمة الانترنت بشار الالوسي شارف على الانتهاء للاستمرار بالتمتع بخدماتنا يرجى تجديد الاشتراك من خلال التواصل معنا مباشرة زيارة مكتبنا او عبر الماستر كارد او الزين كاش رقم الماستر 7116570545 زين كاش 07814122720 شكرا لتفهمكم طلبك الحالي: '+debt+' دينار';
 }
 function renderReminders(){
   const box=$('reminderList'); if(!box) return;
@@ -607,10 +640,11 @@ function renderReminders(){
       : '<span style="color:var(--red);font-size:13px">لا يوجد رقم هاتف</span>';
     return '<div class="rem-row"><div class="rem-info"><b>'+esc(s.user)+'</b>'+
       '<span class="rem-days">'+dtxt+'</span><br>'+
-      '<span style="color:var(--muted);font-size:12px">الهاتف: '+esc(s.phone||'-')+' — الدين: '+fmtNum(s.debt||0)+' دينار</span></div>'+
+      '<span style="color:var(--muted);font-size:12px">الهاتف: '+esc(s.phone||'-')+' — الطلب الحالي: '+fmtNum(s.debt||0)+' دينار</span></div>'+
       wa+'</div>';
   }).join('');
 }
+// تحويل الرقم العراقي إلى صيغة دولية لواتساب
 function waNum(phone){
   let p=(phone||'').replace(/\D/g,'');
   if(p.startsWith('0')) p='964'+p.slice(1);
@@ -618,6 +652,9 @@ function waNum(phone){
   return p;
 }
 
+/* =====================================================================
+   إضافة / حفظ مشترك من النموذج العلوي
+   ===================================================================== */
 function clearForm(){
   ['fUser','fPass','fPhone','fStart','fEnd','fSpeed','fNote','editId'].forEach(i=>$(i).value='');
   $('fDebt').value='0'; $('formTitle').textContent='➕ إضافة مشترك جديد';
@@ -633,10 +670,13 @@ async function saveSubFromForm(){
   try{
     if(id){ await dbUpdate(id, data); toast('تم تعديل المشترك'); }
     else { await dbAdd(data); toast('تمت إضافة المشترك'); }
-    clearForm(); renderAll();
-  }catch(e){ toast('خطأ في الحفظ'); }
+    clearForm(); if(!useCloud) renderAll();
+  }catch(e){ toast('خطأ في الحفظ'); console.error(e); }
 }
 
+/* =====================================================================
+   نافذة التعديل (عند الضغط على المشترك)
+   ===================================================================== */
 function openEdit(id){
   const s=SUBS.find(x=>x.id===id); if(!s) return;
   $('eId').value=s.id; $('eUser').value=s.user||''; $('ePass').value=s.pass||'';
@@ -655,63 +695,117 @@ async function updateFromModal(){
     phone:$('ePhone').value.trim(), speed:$('eSpeed').value.trim(),
     start:$('eStart').value, end:$('eEnd').value, debt, note:$('eNote').value.trim() };
   try{ await dbUpdate(id, data); $('editModal').classList.add('hidden');
-    toast('تم حفظ التعديلات'); renderAll(); }
+    toast('تم حفظ التعديلات'); if(!useCloud) renderAll(); }
   catch(e){ toast('خطأ في الحفظ'); }
+}
+function waLink(phone){
+  let p=(phone||'').replace(/\D/g,'');
+  if(p.startsWith('0')) p='964'+p.slice(1);
+  else if(!p.startsWith('964')) p='964'+p;
+  return 'https://wa.me/'+p;
 }
 async function deleteSub(id){
   const s=SUBS.find(x=>x.id===id);
-  if(!confirm('حذف المشترك "'+(s?s.user:'')+'"؟')) return;
-  try{ await dbDelete(id); toast('تم الحذف'); renderAll(); }
+  if(!confirm('حذف المشترك "'+(s?s.user:'')+'"؟ لا يمكن التراجع.')) return;
+  try{ await dbDelete(id); toast('تم الحذف'); if(!useCloud) renderAll(); }
   catch(e){ toast('خطأ في الحذف'); }
 }
 
+/* =====================================================================
+   تغيير كلمة السر + نسخ احتياطية
+   ===================================================================== */
 async function changePass(){
   const p1=$('newPass').value, p2=$('newPass2').value, err=$('setErr'); err.textContent='';
   if(p1.length<6){ err.textContent='كلمة السر 6 أحرف على الأقل'; return; }
   if(p1!==p2){ err.textContent='كلمتا السر غير متطابقتين'; return; }
   if(useCloud){
     try{ await auth.currentUser.updatePassword(p1); toast('تم تغيير كلمة السر'); $('settingsModal').classList.add('hidden'); }
-    catch(e){ err.textContent = authErrAr(e); }
+    catch(e){ err.textContent = e.code==='auth/requires-recent-login' ? 'لأسباب أمنية سجّل الخروج ثم الدخول وأعد المحاولة' : authErrAr(e); }
   }else{
     const a=getLocalAdmin()||{email:currentEmail}; a.pass=p1; setLocalAdmin(a);
     toast('تم تغيير كلمة السر'); $('settingsModal').classList.add('hidden');
   }
+  $('newPass').value=''; $('newPass2').value='';
 }
 function exportData(){
   const blob=new Blob([JSON.stringify(SUBS,null,2)],{type:'application/json'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
-  a.download='subscribers_backup.json'; a.click();
-  toast('تم التصدير بنجاح');
+  a.download='subscribers_backup_'+new Date().toISOString().slice(0,10)+'.json'; a.click();
+  toast('تم تصدير نسخة احتياطية');
 }
 function importData(file){
   const r=new FileReader();
   r.onload=async ()=>{
     try{ const arr=JSON.parse(r.result); if(!Array.isArray(arr)) throw 0;
       for(const s of arr){ const {id,...d}=s; await dbAdd(d); }
-      toast('تم الاستيراد بنجاح'); renderAll();
+      toast('تم استيراد '+arr.length+' مشترك'); if(!useCloud) renderAll();
     }catch(e){ toast('ملف غير صالح'); }
   };
   r.readAsText(file);
 }
 
+/* =====================================================================
+   رقم واتساب المتجر (لطلبات المشتركين) — غيّره لرقمك
+   ===================================================================== */
 const ADMIN_WA = '9647814122720';
+
+/* أقسام المتجر */
 const CATS = {
   cctv:{label:'كاميرات المراقبة',icon:'📷'},
-  recorder:{label:'أجهزة التسجيل',icon:'🖥️'},
+  recorder:{label:'أجهزة التسجيل DVR/NVR',icon:'🖥️'},
   router:{label:'الراوترات',icon:'📡'},
-  net:{label:'مقويات ومعدات الإنترنت',icon:'🛜'},
-  dish:{label:'الستلايت',icon:'📺'},
-  cable:{label:'الكيبلات',icon:'🔌'},
+  net:{label:'أجهزة ومقويات الإنترنت',icon:'🛜'},
+  dish:{label:'الصحون والستلايت',icon:'📺'},
+  cable:{label:'الكيبلات والتوصيلات',icon:'🔌'},
   power:{label:'UPS ومصادر الطاقة',icon:'🔋'},
-  acc:{label:'إكسسوارات',icon:'🧰'}
+  acc:{label:'إكسسوارات ومستلزمات',icon:'🧰'}
 };
-const DEFAULT_CATALOG = [
-  {cat:'cctv',icon:'📷',name:'كاميرا مراقبة داخلية 2MP',price:35000,desc:'دقة Full HD'},
-  {cat:'cctv',icon:'📹',name:'كاميرا مراقبة خارجية 4MP',price:55000,desc:'رؤية ليلية ملونة'},
-  {cat:'router',icon:'📡',name:'راوتر منزلي سريع',price:35000,desc:'WiFi سريع'},
-  {cat:'net',icon:'📣',name:'مقوي إشارة واي فاي',price:25000,desc:'توسيع التغطية'}
-];
 
+/* الكتالوج الجاهز (يُعرض تلقائيًا إذا لم يضف المدير منتجات) */
+const DEFAULT_CATALOG = [
+  {cat:'cctv',icon:'📷',name:'كاميرا مراقبة داخلية 2MP',price:35000,desc:'دقة Full HD — رؤية ليلية — للمنازل والمحلات'},
+  {cat:'cctv',icon:'📹',name:'كاميرا مراقبة خارجية 4MP',price:55000,desc:'مقاومة للماء — رؤية ليلية ملونة'},
+  {cat:'cctv',icon:'🕳️',name:'كاميرا دوم 5MP',price:60000,desc:'زاوية واسعة — تصميم أنيق للداخل'},
+  {cat:'cctv',icon:'📶',name:'كاميرا IP لاسلكية WiFi',price:65000,desc:'متابعة مباشرة عبر الهاتف — صوت ثنائي'},
+  {cat:'cctv',icon:'🔄',name:'كاميرا PTZ متحركة',price:180000,desc:'تكبير بصري وتدوير 360° — تتبع تلقائي'},
+  {cat:'recorder',icon:'🖥️',name:'جهاز تسجيل DVR 4 قنوات',price:70000,desc:'يدعم كاميرات AHD — تسجيل HD'},
+  {cat:'recorder',icon:'🖥️',name:'جهاز تسجيل DVR 8 قنوات',price:95000,desc:'تسجيل مستمر — وصول عبر الهاتف'},
+  {cat:'recorder',icon:'💽',name:'جهاز تسجيل NVR 8 قنوات',price:120000,desc:'لكاميرات IP — دقة عالية'},
+  {cat:'recorder',icon:'💾',name:'هارد ديسك مراقبة 1TB',price:65000,desc:'مخصص للتسجيل المستمر Surveillance'},
+  {cat:'recorder',icon:'💾',name:'هارد ديسك مراقبة 2TB',price:95000,desc:'سعة أكبر — عمر تشغيلي طويل'},
+  {cat:'router',icon:'📡',name:'راوتر منزلي TP-Link',price:35000,desc:'WiFi سريع — سهل الإعداد'},
+  {cat:'router',icon:'📡',name:'راوتر مزدوج النطاق Dual Band',price:55000,desc:'5GHz + 2.4GHz — أداء عالٍ'},
+  {cat:'router',icon:'🌐',name:'راوتر فايبر Fiber ONU',price:70000,desc:'للألياف البصرية — سرعات فائقة'},
+  {cat:'router',icon:'📳',name:'راوتر 4G LTE مع شريحة',price:85000,desc:'إنترنت بدون كيبل — متنقل'},
+  {cat:'router',icon:'🌐',name:'نظام Mesh تغطية كاملة',price:150000,desc:'للمنازل الكبيرة — تغطية بلا انقطاع'},
+  {cat:'net',icon:'📠',name:'أكسس بوينت Access Point',price:45000,desc:'توزيع WiFi واسع للشركات'},
+  {cat:'net',icon:'📣',name:'مقوي إشارة WiFi Repeater',price:25000,desc:'توسيع تغطية الواي فاي'},
+  {cat:'net',icon:'🔀',name:'سويتش شبكة 8 منافذ',price:40000,desc:'توزيع إنترنت سلكي ثابت'},
+  {cat:'net',icon:'🔌',name:'سويتش PoE 4 منافذ',price:75000,desc:'تغذية الكاميرات بالطاقة عبر الكيبل'},
+  {cat:'net',icon:'📡',name:'هوائي استقبال لاسلكي خارجي',price:90000,desc:'ربط نقطة لنقطة — مدى بعيد'},
+  {cat:'dish',icon:'📺',name:'صحن ستلايت 80cm',price:20000,desc:'استقبال قنوات — تركيب سهل'},
+  {cat:'dish',icon:'📺',name:'صحن ستلايت 120cm',price:35000,desc:'استقبال قوي — للمناطق البعيدة'},
+  {cat:'dish',icon:'📡',name:'رسيفر HD ستلايت',price:30000,desc:'جودة عالية — منافذ USB/HDMI'},
+  {cat:'dish',icon:'📡',name:'LNB مزدوج',price:8000,desc:'استقبال قمرين — إشارة نقية'},
+  {cat:'cable',icon:'🔌',name:'كيبل شبكة Cat6 (لفة)',price:45000,desc:'إنترنت عالي السرعة — نحاس كامل'},
+  {cat:'cable',icon:'🔌',name:'كيبل كواكسل RG6 (لفة)',price:40000,desc:'لنقل فيديو الكاميرات والصحون'},
+  {cat:'cable',icon:'🌐',name:'كيبل فايبر بصري',price:0,desc:'ألياف ضوئية — السعر حسب الطول'},
+  {cat:'cable',icon:'🔗',name:'وصلات RJ45 (باكيت)',price:7000,desc:'أطراف شبكة — 100 قطعة'},
+  {cat:'cable',icon:'🔗',name:'وصلات BNC للكاميرات',price:6000,desc:'توصيل الكاميرات بالـ DVR'},
+  {cat:'power',icon:'🔋',name:'UPS 650VA',price:55000,desc:'حماية من انقطاع الكهرباء — للراوتر'},
+  {cat:'power',icon:'🔋',name:'UPS 1200VA',price:95000,desc:'دعم أطول — يشغل عدة أجهزة'},
+  {cat:'power',icon:'🔌',name:'محول طاقة 12V للكاميرات',price:10000,desc:'مزود كهرباء ثابت 2A'},
+  {cat:'power',icon:'🔌',name:'باور سبلاي 10A',price:35000,desc:'تغذية عدة كاميرات معًا'},
+  {cat:'power',icon:'🔋',name:'بطارية احتياطية 12V',price:25000,desc:'دعم الراوتر والكاميرات عند الانقطاع'},
+  {cat:'acc',icon:'📦',name:'علبة توزيع للكاميرات',price:5000,desc:'تنظيم التوصيلات — مقاومة'},
+  {cat:'acc',icon:'📏',name:'حامل / ستاند للصحن',price:12000,desc:'تثبيت قوي للجدار أو السطح'},
+  {cat:'acc',icon:'🧰',name:'أدوات تركيب (كلبسات ومسامير)',price:5000,desc:'تثبيت الكيبلات بشكل مرتب'}
+];
+let catA='all', catS='all';
+
+/* =====================================================================
+   المتجر (المنتجات)
+   ===================================================================== */
 let PRODS = [];
 const PKEY = 'bashar_products_v1';
 function loadProdsLocal(){ try{ return JSON.parse(localStorage.getItem(PKEY)||'[]'); }catch(e){ return []; } }
@@ -730,32 +824,37 @@ async function dbDeleteProduct(id){
 }
 function watchProducts(){
   if(useCloud){
-    db.collection('products').onSnapshot(snap=>{ PRODS=snap.docs.map(d=>({id:d.id,...d.data()})); renderStore(); });
+    db.collection('products').onSnapshot(snap=>{ PRODS=snap.docs.map(d=>({id:d.id,...d.data()})); renderStore(); },
+      err=>console.error(err));
   }else{ PRODS=loadProdsLocal(); renderStore(); }
 }
 function prodCardHTML(p, admin){
   const ic = CATS[p.cat] ? CATS[p.cat].icon : '📦';
   const icon = p.icon || ic;
-  let head = '<div class="picon">'+icon+'</div>';
-  const priceHTML = (Number(p.price)>0) ? '<div class="pprice">IQD '+fmtNum(p.price)+'</div>' : '<div class="pprice call">اتصل لمعرفة السعر</div>';
+  let head;
+  if(p.img) head = '<img src="'+esc(p.img)+'" alt="" onerror="this.outerHTML=\'<div class=&quot;picon&quot;>'+icon+'</div>\'">';
+  else head = '<div class="picon">'+icon+'</div>';
+  const priceHTML = (Number(p.price)>0)
+    ? '<div class="pprice">IQD '+fmtNum(p.price)+'</div>'
+    : '<div class="pprice call">اتصل لمعرفة السعر</div>';
   const catLbl = CATS[p.cat] ? CATS[p.cat].label : '';
   let h='<div class="prod">'+head+'<div class="body">'+
     '<div class="pcat">'+esc(catLbl)+'</div>'+
     '<div class="pname">'+esc(p.name)+'</div>'+
     '<div class="pdesc">'+esc(p.desc||'')+'</div>'+ priceHTML;
   if(!admin){
-    const priceTxt = Number(p.price)>0 ? (fmtNum(p.price)+' دينار') : '';
+    const priceTxt = Number(p.price)>0 ? (fmtNum(p.price)+' دينار') : '(استفسار عن السعر)';
     const msg=encodeURIComponent('السلام عليكم، أرغب بـ: '+(p.name||'')+' — '+priceTxt);
-    h+='<a class="pbuy" target="_blank" href="https://wa.me/'+ADMIN_WA+'?text='+msg+'">💬 اطلب عبر واتساب</a>';
+    h+='<a class="pbuy" style="text-align:center;text-decoration:none;display:block" target="_blank" href="https://wa.me/'+ADMIN_WA+'?text='+msg+'">💬 اطلب عبر واتساب</a>';
   }
   h+='</div>';
   if(admin){
     if(p._builtin){
-      h+='<div class="prod-admin"><button disabled type="button" style="background:#cbd5e1;cursor:default">جاهز</button></div>';
+      h+='<div class="prod-admin"><button disabled style="background:#cbd5e1;cursor:default">جاهز (اضغط تعبئة الكتالوج للتعديل)</button></div>';
     }else{
       h+='<div class="prod-admin">'+
-        '<button data-pact="edit" data-pid="'+p.id+'" type="button" style="background:var(--yellow)">تعديل</button>'+
-        '<button data-pact="del" data-pid="'+p.id+'" type="button" style="background:var(--red)">حذف</button></div>';
+        '<button data-pact="edit" data-pid="'+p.id+'" style="background:var(--yellow)">تعديل</button>'+
+        '<button data-pact="del" data-pid="'+p.id+'" style="background:var(--red)">حذف</button></div>';
     }
   }
   return h+'</div>';
@@ -764,27 +863,30 @@ function effectiveProducts(){
   if(PRODS.length) return PRODS;
   return DEFAULT_CATALOG.map((p,i)=>({...p, id:'d'+i, _builtin:true}));
 }
-let catA='all', catS='all';
 function renderCatBar(containerId, list, active, onPick){
   const el=$(containerId); if(!el) return;
   const present = [...new Set(list.map(p=>p.cat))];
   const order = Object.keys(CATS).filter(k=>present.includes(k));
-  let html='<button class="cat-chip'+(active==='all'?' on':'')+'" data-cat="all" type="button">🛒 الكل</button>';
-  order.forEach(k=>{ html+='<button class="cat-chip'+(active===k?' on':'')+'" data-cat="'+k+'" type="button">'+CATS[k].icon+' '+esc(CATS[k].label)+'</button>'; });
+  let html='<button class="cat-chip'+(active==='all'?' on':'')+'" data-cat="all">🛒 الكل</button>';
+  order.forEach(k=>{ html+='<button class="cat-chip'+(active===k?' on':'')+'" data-cat="'+k+'">'+CATS[k].icon+' '+esc(CATS[k].label)+'</button>'; });
   el.innerHTML=html;
   el.onclick=e=>{ const b=e.target.closest('button[data-cat]'); if(b) onPick(b.dataset.cat); };
 }
 function renderStore(){
   const list = effectiveProducts();
+  // لوحة الإدارة
   if($('adminStore')){
     renderCatBar('adminCats', list, catA, c=>{ catA=c; renderStore(); });
     const fa = catA==='all' ? list : list.filter(p=>p.cat===catA);
     $('adminStore').innerHTML = fa.map(p=>prodCardHTML(p,true)).join('');
+    $('adminStoreEmpty').classList.toggle('hidden', !(PRODS.length===0));
   }
+  // بورتال المشترك
   if($('svStore')){
     renderCatBar('svCats', list, catS, c=>{ catS=c; renderStore(); });
     const fs = catS==='all' ? list : list.filter(p=>p.cat===catS);
     $('svStore').innerHTML = fs.map(p=>prodCardHTML(p,false)).join('');
+    $('svStoreEmpty').classList.toggle('hidden', fs.length>0);
   }
 }
 function fillCatSelect(sel){
@@ -807,19 +909,33 @@ async function saveProduct(){
     icon:$('pIcon').value.trim(), img:$('pImg').value.trim(), desc:$('pDesc').value.trim() };
   const id=$('pId').value;
   try{ if(id) await dbUpdateProduct(id,data); else await dbAddProduct(data);
-    $('prodModal').classList.add('hidden'); toast('تم الحفظ'); renderStore(); }
+    $('prodModal').classList.add('hidden'); toast('تم حفظ المنتج'); if(!useCloud) renderStore(); }
   catch(e){ toast('خطأ في الحفظ'); }
 }
 async function deleteProduct(id){
   if(!confirm('حذف هذا المنتج؟')) return;
-  try{ await dbDeleteProduct(id); toast('تم الحذف'); renderStore(); }
+  try{ await dbDeleteProduct(id); toast('تم الحذف'); if(!useCloud) renderStore(); }
   catch(e){ toast('خطأ في الحذف'); }
 }
 async function seedCatalog(){
-  for(const p of DEFAULT_CATALOG){ await dbAddProduct({...p}); }
-  toast('تمت تعبئة الكتالوج'); renderStore();
+  if(PRODS.length && !confirm('المتجر يحتوي منتجات بالفعل. إضافة الكتالوج الجاهز فوقها؟')) return;
+  if(!PRODS.length && !confirm('سيتم نسخ '+DEFAULT_CATALOG.length+' منتج جاهز إلى متجرك لتتمكن من تعديلها. متابعة؟')) return;
+  try{
+    for(const p of DEFAULT_CATALOG){ await dbAddProduct({...p}); }
+    toast('تمت تعبئة الكتالوج'); if(!useCloud) renderStore();
+  }catch(e){ toast('خطأ أثناء التعبئة'); }
 }
 
+/* =====================================================================
+   بورتال المشترك (دخول باليوزر + الباسورد)
+   ===================================================================== */
+function showSub(sub){
+  $('authView').classList.add('hidden');
+  $('appView').classList.add('hidden');
+  $('subView').classList.remove('hidden');
+  renderSubView(sub);
+  watchProducts();
+}
 function renderSubView(s){
   $('svName').textContent = s.user || 'مشترك';
   const debt = Number(s.debt||0);
@@ -837,7 +953,6 @@ function renderSubView(s){
     const d=Math.round((e-t)/86400000); daysTxt = d<0 ? ('منتهٍ منذ '+Math.abs(d)+' يوم') : (d+' يوم'); }
   $('svDays').textContent = daysTxt;
 }
-
 async function subLogin(){
   const u=$('subUser').value.trim(); const p=$('subPass').value;
   const err=$('authErr'); err.textContent='';
@@ -850,12 +965,62 @@ async function subLogin(){
     }else{
       found = loadLocal().find(x=> x.user===u && String(x.pass)===String(p));
     }
-    if(found){ showSubPortal(found); $('subPass').value=''; }
+    if(found){ showSub(found); $('subPass').value=''; }
     else err.textContent='اليوزر أو الباسورد غير صحيح';
-  }catch(e){ err.textContent='تعذر الدخول'; }
+  }catch(e){ console.error(e); err.textContent='تعذر الدخول، حاول لاحقًا'; }
 }
 
-// أزرار التبديل (مصلحة بالكامل لتعمل بلمسة واحدة)
+/* =====================================================================
+   ربط الأحداث + التشغيل
+   ===================================================================== */
+// المصادقة
+$('btnLogin').onclick = doLogin;
+$('btnShowSignup').onclick = doSignup;
+$('btnReset').onclick = doReset;
+$('loginPass').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+$('btnLogout').onclick = ()=>{ if(useCloud) auth.signOut(); else showAuth(); };
+
+// النموذج العلوي
+$('btnSaveSub').onclick = saveSubFromForm;
+$('btnCancelEdit').onclick = clearForm;
+
+// بطاقات الإحصاء القابلة للضغط
+document.querySelectorAll('.stat[data-filter]').forEach(el=>{
+  el.onclick = ()=>{ currentFilter = el.dataset.filter; renderTable();
+    $('search').value=''; window.scrollTo({top:document.querySelector('.table-head').offsetTop-20,behavior:'smooth'}); };
+});
+$('search').addEventListener('input', renderTable);
+
+// نقرات الجدول (صف / أزرار)
+$('tbody').addEventListener('click', e=>{
+  const tr=e.target.closest('tr'); if(!tr) return; const id=tr.dataset.id;
+  const btn=e.target.closest('button[data-act]');
+  if(btn){ e.stopPropagation(); const act=btn.dataset.act; const s=SUBS.find(x=>x.id===id);
+    if(act==='edit') openEdit(id);
+    else if(act==='wa'){ if(s&&s.phone) window.open('https://wa.me/'+waNum(s.phone)+'?text='+encodeURIComponent(reminderMsg(s)),'_blank'); else toast('لا يوجد رقم هاتف'); }
+    else if(act==='del') deleteSub(id);
+    return; }
+  openEdit(id); // الضغط على الصف يفتح التعديل
+});
+
+// نافذة التعديل
+$('btnUpdateSub').onclick = updateFromModal;
+$('btnWaModal').onclick = ()=>{ const p=$('ePhone').value; if(!p){ toast('لا يوجد رقم هاتف'); return; }
+  const sub={ user:$('eUser').value, phone:p, debt:Number($('eDebt').value||0) };
+  window.open('https://wa.me/'+waNum(p)+'?text='+encodeURIComponent(reminderMsg(sub)),'_blank'); };
+
+// الإعدادات
+$('btnSettings').onclick = ()=> $('settingsModal').classList.remove('hidden');
+$('btnChangePass').onclick = changePass;
+$('btnExport').onclick = exportData;
+$('btnImport').onclick = ()=> $('importFile').click();
+$('importFile').onchange = e=>{ if(e.target.files[0]) importData(e.target.files[0]); e.target.value=''; };
+
+// إغلاق النوافذ
+document.querySelectorAll('[data-close]').forEach(b=> b.onclick = ()=> $(b.dataset.close).classList.add('hidden'));
+document.querySelectorAll('.overlay').forEach(o=> o.addEventListener('click', e=>{ if(e.target===o) o.classList.add('hidden'); }));
+
+// تبويبات الدخول (مشترك / مدير)
 function setTab(which){
   const sub = which==='sub';
   $('tabSub').classList.toggle('on', sub);
@@ -865,53 +1030,15 @@ function setTab(which){
   $('authSub').textContent = sub ? 'دخول المشترك — أدخل يوزرك وكلمة السر' : 'دخول الإدارة — بالبريد الإلكتروني';
   $('authErr').textContent='';
 }
-$('tabSub').onclick = (e) => { e.preventDefault(); setTab('sub'); };
-$('tabAdmin').onclick = (e) => { e.preventDefault(); setTab('admin'); };
+$('tabSub').onclick = ()=> setTab('sub');
+$('tabAdmin').onclick = ()=> setTab('admin');
 
-$('btnLogin').onclick = doLogin;
-$('btnShowSignup').onclick = doSignup;
-$('btnReset').onclick = doReset;
-$('btnLogout').onclick = showAuth;
-
-$('btnSaveSub').onclick = saveSubFromForm;
-$('btnCancelEdit').onclick = clearForm;
-
-document.querySelectorAll('.stat[data-filter]').forEach(el=>{
-  el.onclick = ()=>{ currentFilter = el.dataset.filter; renderTable();
-    $('search').value=''; window.scrollTo({top:document.querySelector('.table-head').offsetTop-20,behavior:'smooth'}); };
-});
-$('search').addEventListener('input', renderTable);
-
-$('tbody').addEventListener('click', e=>{
-  const tr=e.target.closest('tr'); if(!tr) return; const id=tr.dataset.id;
-  const btn=e.target.closest('button[data-act]');
-  if(btn){ e.stopPropagation(); const act=btn.dataset.act; const s=SUBS.find(x=>x.id===id);
-    if(act==='edit') openEdit(id);
-    else if(act==='wa'){ if(s&&s.phone) window.open('https://wa.me/'+waNum(s.phone)+'?text='+encodeURIComponent(reminderMsg(s)),'_blank'); else toast('لا يوجد رقم هاتف'); }
-    else if(act==='del') deleteSub(id);
-    return; }
-  openEdit(id);
-});
-
-$('btnUpdateSub').onclick = updateFromModal;
-$('btnWaModal').onclick = ()=>{ const p=$('ePhone').value; if(!p){ toast('لا يوجد رقم هاتف'); return; }
-  const sub={ user:$('eUser').value, phone:p, debt:Number($('eDebt').value||0) };
-  window.open('https://wa.me/'+waNum(p)+'?text='+encodeURIComponent(reminderMsg(sub)),'_blank'); };
-
-$('btnSettings').onclick = ()=> $('settingsModal').classList.remove('hidden');
-$('btnChangePass').onclick = changePass;
-$('btnExport').onclick = exportData;
-$('btnImport').onclick = ()=> $('importFile').click();
-$('importFile').onchange = e=>{ if(e.target.files[0]) importData(e.target.files[0]); e.target.value=''; };
-
-document.querySelectorAll('[data-close]').forEach(b=> b.onclick = ()=> $(b.dataset.close).classList.add('hidden'));
-document.querySelectorAll('.overlay').forEach(o=> o.addEventListener('click', e=>{ if(e.target===o) o.classList.add('hidden')); }));
-
+// دخول/خروج المشترك
 $('btnSubLogin').onclick = subLogin;
 $('subPass').addEventListener('keydown', e=>{ if(e.key==='Enter') subLogin(); });
-$('btnSubLogout').onclick = showAuth;
+$('btnSubLogout').onclick = ()=>{ showAuth(); setTab('sub'); };
 
-// فحص السرعة
+// فحص السرعة الفعلي (قياس حقيقي عبر خادم Cloudflare العالمي)
 let spdRunning=false;
 const SPD_DOWN='https://speed.cloudflare.com/__down?bytes=';
 const SPD_UP='https://speed.cloudflare.com/__up';
@@ -920,25 +1047,56 @@ function spdSetGauge(mbps){
   $('spdGauge').style.background='conic-gradient(var(--primary) '+deg+'deg, #e5e7eb '+deg+'deg)';
   $('spdNum').textContent=mbps.toFixed(1);
 }
+async function measurePing(){
+  const arr=[];
+  for(let i=0;i<5;i++){ const t=performance.now();
+    try{ await fetch(SPD_DOWN+'0',{cache:'no-store'}); }catch(e){ throw e; }
+    arr.push(performance.now()-t); }
+  return Math.round(Math.min(...arr));
+}
+async function measureDownload(){
+  const sizes=[1e6,2e6,5e6,8e6];   // تصاعدي — إجمالي ~16MB
+  let bytes=0, secs=0;
+  for(const sz of sizes){
+    const t=performance.now();
+    const r=await fetch(SPD_DOWN+sz,{cache:'no-store'});
+    const buf=await r.arrayBuffer();
+    const dt=(performance.now()-t)/1000;
+    bytes+=buf.byteLength; secs+=dt;
+    spdSetGauge((buf.byteLength*8)/(dt*1e6));   // عرض حي لكل دفعة
+  }
+  return (bytes*8)/(secs*1e6);
+}
+async function measureUpload(){
+  const body=new Uint8Array(4e6);               // 4MB
+  const t=performance.now();
+  await fetch(SPD_UP,{method:'POST',body,cache:'no-store'});
+  const dt=(performance.now()-t)/1000;
+  return (body.byteLength*8)/(dt*1e6);
+}
 async function runSpeedTest(){
   if(spdRunning) return; spdRunning=true;
   const btn=$('btnSpeed'); btn.disabled=true; btn.textContent='⏳ جاري الفحص...';
+  $('spdDown').textContent='—'; $('spdUp').textContent='—'; $('spdPing').textContent='—'; $('spdRate').textContent='—';
+  spdSetGauge(0);
   try{
-    const t=performance.now();
-    const r=await fetch(SPD_DOWN+'2000000',{cache:'no-store'});
-    const buf=await r.arrayBuffer();
-    const dt=(performance.now()-t)/1000;
-    const down=(buf.byteLength*8)/(dt*1e6);
+    const ping=await measurePing(); $('spdPing').textContent=ping+' ms';
+    const down=await measureDownload();
+    const up=await measureUpload();
     spdSetGauge(down);
     $('spdDown').textContent=down.toFixed(1)+' Mbps';
-    $('spdUp').textContent=(down*0.3).toFixed(1)+' Mbps';
-    $('spdPing').textContent='15 ms';
-    $('spdRate').textContent = down>=20?'سريع ✅':'جيد 👍';
-  }catch(e){ toast('تعذر الفحص'); }
-  btn.disabled=false; btn.textContent='▶️ ابدأ الفحص'; spdRunning=false;
+    $('spdUp').textContent=up.toFixed(1)+' Mbps';
+    $('spdRate').textContent = down>=40?'ممتاز ⚡':(down>=20?'سريع ✅':(down>=5?'جيد 👍':'ضعيف ⚠️'));
+  }catch(e){
+    // تعذر الوصول للخادم (شبكة/حجب) — عرض رسالة واضحة
+    $('spdRate').textContent='تعذر الفحص — تحقق من الاتصال';
+    toast('تعذر الوصول لخادم القياس، تأكد من الإنترنت');
+  }
+  btn.disabled=false; btn.textContent='▶️ إعادة الفحص'; spdRunning=false;
 }
 $('btnSpeed').onclick = runSpeedTest;
 
+// إدارة المتجر
 $('btnAddProduct').onclick = ()=> openProduct(null);
 $('btnSeedCatalog').onclick = seedCatalog;
 $('btnSaveProduct').onclick = saveProduct;
@@ -948,22 +1106,20 @@ $('adminStore').addEventListener('click', e=>{
   else deleteProduct(b.dataset.pid);
 });
 
+// تذكير الجميع (فتح واتساب لكل مستحق بالتسلسل)
 $('btnRemindAll').onclick = ()=>{
   const due=dueReminders().filter(s=>s.phone);
-  if(!due.length){ toast('لا يوجد مشتركون'); return; }
+  if(!due.length){ toast('لا يوجد مشتركون لتذكيرهم'); return; }
+  if(!confirm('سيتم فتح محادثات واتساب لـ '+due.length+' مشترك. أرسل كل رسالة ثم ارجع للتالي. متابعة؟')) return;
   due.forEach((s,i)=> setTimeout(()=> window.open('https://wa.me/'+waNum(s.phone)+'?text='+encodeURIComponent(reminderMsg(s)),'_blank'), i*600));
 };
 
-// فحص الجلسة للبقاء مسجلاً بعد الـ Refresh
-function checkExistingSession(){
-  const session = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
-  if(!session) { showAuth(); return; }
-  if(session.type === 'admin') showApp(session.email || 'المدير');
-  else if(session.type === 'sub') showSubPortal(session.user);
-  else showAuth();
+// التشغيل
+if(useCloud){
+  auth.onAuthStateChanged(u=>{ if(u) showApp(u.email); else showAuth(); });
+}else{
+  showAuth();
 }
-
-checkExistingSession();
 </script>
 </body>
 </html>
