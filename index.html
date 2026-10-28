@@ -2,65 +2,47 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>بشار الالوسي لخدمات الانترنت والاتصالات</title>
-    <!-- Firebase السحابي الحقيقي للمزامنة بين جميع الأجهزة -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بشار الالوسي لخدمات الانترنت</title>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@500;700&display=swap');
-        body { background-color: #3b0066; color: #ffffff; font-family: 'Tajawal', sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .container { width: 98%; max-width: 900px; margin-top: 30px; margin-bottom: 30px; background-color: #4d0085; padding: 25px 15px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); box-sizing: border-box; }
-        h2 { text-align: center; margin-bottom: 25px; font-size: 22px; }
-        input, select { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #7a1fb8; border-radius: 8px; background-color: #ffffff; color: #333; font-size: 16px; font-family: 'Tajawal', sans-serif; box-sizing: border-box; outline: none; }
-        button { width: 100%; padding: 14px; background-color: #8c2ee0; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; font-family: 'Tajawal', sans-serif; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
-        button:hover { background-color: #a348f5; }
-        .btn-green { background-color: #28a745; } .btn-green:hover { background-color: #218838; }
-        .btn-red { background-color: #dc3545; }
-        .result-box, .admin-box { display: none; margin-top: 15px; background-color: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; }
-        .result-item { margin-bottom: 10px; font-size: 16px; }
-        #messageBox { text-align: center; margin-top: 10px; font-weight: bold; display: none; }
-        
-        .role-switch { display: flex; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 5px; margin-bottom: 20px; max-width: 400px; margin-left: auto; margin-right: auto; }
-        .role-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; background: transparent; color: #bbb; font-size: 16px; font-weight: bold; font-family: 'Tajawal', sans-serif; cursor: pointer; transition: 0.3s; }
-        .role-btn.active { background-color: #00ff88; color: #110022; box-shadow: 0 2px 10px rgba(0,255,136,0.4); }
-
-        .dashboard-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 25px; margin-bottom: 20px; }
-        .dash-card { padding: 15px 10px; border-radius: 10px; text-align: center; color: white; font-weight: bold; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
-        .dash-card h4 { margin: 0 0 8px 0; font-size: 13px; opacity: 0.95; }
-        .dash-card p { margin: 0; font-size: 22px; }
-        .card-total { background-color: #43649e; }
-        .card-active { background-color: #49b56d; }
-        .card-expiring { background-color: #f1b31c; color: #333; }
-        .card-expired { background-color: #e5625c; }
-        .card-debt { background-color: #3b528a; }
-
-        .badge-active { background-color: #28a745; color: white; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 13px; display: inline-block; }
-        .badge-expiring { background-color: #ffc107; color: #222; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 13px; display: inline-block; }
-        .badge-expired { background-color: #dc3545; color: white; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 13px; display: inline-block; }
-
-        .payment-box { background: rgba(0,0,0,0.25); border: 1px solid #00ff88; border-radius: 10px; padding: 15px; margin-top: 20px; text-align: right; }
-        .payment-title { color: #00ff88; font-size: 16px; font-weight: bold; margin-bottom: 10px; text-align: center; }
-        .payment-item { font-size: 14px; margin-bottom: 6px; color: #fff; }
-
-        .store-section { margin-top: 25px; border-top: 2px solid rgba(255,255,255,0.2); padding-top: 20px; text-align: right; }
-        .store-title { text-align: center; color: #00ff88; margin-bottom: 15px; font-size: 20px; }
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
-        .product-card { background-color: rgba(0,0,0,0.35); border-radius: 12px; padding: 15px; text-align: center; border: 1px solid rgba(255,255,255,0.2); display: flex; flex-direction: column; justify-content: space-between; }
-        .product-img-box { width: 100%; height: 90px; background: linear-gradient(135deg, #2c004e, #590099); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 38px; margin-bottom: 10px; }
-        .product-card h3 { font-size: 15px; margin: 6px 0; color: #ffd700; }
-        .product-card p { font-size: 12px; margin: 4px 0; color: #ddd; }
-        .product-price { font-weight: bold; color: #00ff88; font-size: 14px; margin: 6px 0; }
-        .btn-buy { background-color: #25d366; color: white; padding: 8px; border-radius: 6px; font-size: 13px; text-decoration: none; font-weight: bold; display: block; margin-top: 6px; }
-
-        .speedtest-section { margin-top: 25px; border-top: 2px solid rgba(255,255,255,0.2); padding-top: 20px; text-align: center; background: rgba(0,0,0,0.25); padding: 25px; border-radius: 12px; }
-        .speed-circle { width: 150px; height: 150px; border-radius: 50%; border: 6px solid #00ff88; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 15px auto; background: radial-gradient(circle, #220044 0%, #110022 100%); box-shadow: 0 0 25px rgba(0,255,136,0.4); cursor: pointer; transition: 0.3s; position: relative; }
-        .speed-circle:hover { transform: scale(1.05); }
-        .speed-circle span { font-size: 11px; color: #aaa; text-transform: uppercase; }
-        .speed-circle strong { font-size: 26px; color: #00ff88; margin-top: 2px; }
-        .speed-details { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
-        .speed-detail-box { background: rgba(255,255,255,0.08); padding: 10px; border-radius: 8px; font-size: 13px; }
-        .speed-detail-box span { display: block; color: #ccc; font-size: 11px; }
-
-        .table-container { overflow-x: auto; border-radius: 8px; display: none; margin-top: 15px; }
-        table { width: 100%; border-collapse: collapse; background-color: #ffffff; color: #333; font-size: 14px; text-align: center; white-
+        body { background-color: #3b0066; color: #fff; font-family: Tahoma, sans-serif; text-align: center; padding: 50px; }
+        .box { background: #4d0085; padding: 30px; border-radius: 10px; max-width: 400px; margin: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        input, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; font-size: 16px; box-sizing: border-box; }
+        input { background: #fff; color: #333; }
+        button { background: #8c2ee0; color: #fff; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>بشار الالوسي<br>لخدمات الانترنت والاتصالات</h2>
+        <input type="text" id="u" placeholder="اليوزر">
+        <input type="password" id="p" placeholder="الباسورد">
+        <button onclick="go()">دخول</button>
+        <p id="msg" style="color:#ffd700;"></p>
+    </div>
+    <script>
+        const cfg = { apiKey: "AIsyCFV84WqJdfhmBWbn2KUNxOUwXTAERNHHE", authDomain: "start-in-production.firebaseapp.com", projectId: "start-in-production", storageBucket: "start-in-production.firebasestorage.app", messagingSenderId: "929663491292", appId: "1:929663491292:web:46beb745d3dedc789ae819" };
+        firebase.initializeApp(cfg);
+        const db = firebase.firestore();
+        async function go() {
+            let u = document.getElementById('u').value.trim();
+            let p = document.getElementById('p').value.trim();
+            let m = document.getElementById('msg');
+            if(u === 'bashar@dsc' && p === 'bashar2000') {
+                m.innerText = "تم تسجيل دخول المدير بنجاح!";
+                return;
+            }
+            m.innerText = "جاري التحقق...";
+            try {
+                let snap = await db.collection('subscribers').where('username', '==', u).get();
+                let found = false;
+                snap.forEach(d => { if(String(d.data().password) === String(p)) found = true; });
+                if(found) { m.innerText = "أهلاً بك، تسجيل دخول صحيح!"; }
+                else { m.innerText = "خطأ في اليوزر أو الباسورد"; }
+            } catch(e) { m.innerText = "خطأ في الاتصال بالسحابة"; }
+        }
+    </script>
+</body>
+</html>
